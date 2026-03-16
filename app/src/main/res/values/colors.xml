@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="onboarding_background">#FF000000</color>
+    <color name="onboarding_title">#FFFFFFFF</color>
+    <color name="onboarding_description">#9CA3AF</color>
+    <color name="onboarding_cta">#3CCB46</color>
+    <color name="onboarding_cta_text">#FFFFFFFF</color>
+    <color name="gradient_transparent">#00000000</color>
+    <color name="gradient_black">#FF000000</color>
+</resources>

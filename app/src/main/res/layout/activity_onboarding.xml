@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/onboarding_background">
+
+    <ImageView
+        android:id="@+id/iv_hero"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/onboarding_background_food"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_title"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <View
+        android:id="@+id/gradient_overlay"
+        android:layout_width="0dp"
+        android:layout_height="350dp"
+        android:background="@drawable/onboarding_gradient_bottom_black"
+        app:layout_constraintBottom_toBottomOf="@id/iv_hero"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Your body,\nby the numbers."
+        android:textColor="@color/onboarding_title"
+        android:textSize="28sp"
+        android:fontFamily="@font/inter_bold"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        android:layout_marginTop="95dp"
+        app:layout_constraintTop_toBottomOf="@id/iv_hero"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="To provide accurate nutritional guidance, BiteWise uses your biometrics and health status to calculate your specific needs. This ensures our AI advice isn't just general—it's built for you."
+        android:textColor="@color/onboarding_description"
+        android:textSize="14sp"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        android:lineSpacingExtra="5dp"
+        android:paddingHorizontal="32dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_get_started"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="32dp"
+        android:text="Let's get started!"
+        android:textColor="@color/onboarding_cta_text"
+        android:textSize="16sp"
+        android:textAllCaps="false"
+        android:fontFamily="@font/inter_bold"
+        app:backgroundTint="@color/onboarding_cta"
+        app:cornerRadius="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
