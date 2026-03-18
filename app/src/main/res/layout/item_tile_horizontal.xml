@@ -17,6 +17,8 @@
         android:id="@+id/txt_tile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="Food"
         android:textSize="12sp"/>
+
 </LinearLayout>

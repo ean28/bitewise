@@ -11,6 +11,7 @@
 
     <color name="primaryColor">#3CCB46</color>
     <color name="primaryDarkColor">#6D8969</color>
+    <color name="dark">#293129FF</color>
 
     <color name="white">#FFFFFF</color>
 
