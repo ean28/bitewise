@@ -3,6 +3,8 @@
     <style name="Base.Theme.BiteWise" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
     </style>
 
     <style name="Theme.BiteWise" parent="Base.Theme.BiteWise" />
