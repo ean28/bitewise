@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">BiteWise</string>
+
+    <!-- Search Fragment-->
+    <string name="country_dropdown_format">%1$s \u25BC</string>
+
+    <string name="no_results">No results found</string>
+    <plurals name="search_results_count">
+        <item quantity="one">%d result found</item>
+        <item quantity="other">%d results found</item>
+    </plurals>
+
 </resources>

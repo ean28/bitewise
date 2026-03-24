@@ -4,67 +4,62 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.R
-import com.bitewise.app.data.network.RetrofitInstance.api
-import com.bitewise.app.data.network.repository.ProductRepository
+import com.bitewise.app.data.local.di.DatabaseModule
+import com.bitewise.app.data.repository.LocalProductRepository
+import com.bitewise.app.databinding.FragmentHomeScreenBinding
 import com.bitewise.app.ui.home.adapters.HorizontalFoodTile
 import com.bitewise.app.ui.home.adapters.HorizontalTileAdapter
 import com.bitewise.app.ui.product.ProductViewModel
 import com.bitewise.app.ui.product.ProductViewModelFactory
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.fragment_home_screen) {
 
+    private var _binding: FragmentHomeScreenBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var viewModel: ProductViewModel
     private lateinit var adapter: HorizontalTileAdapter
-    private lateinit var recentSearchedRecycler: RecyclerView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentHomeScreenBinding.bind(view)
 
-        val repository: ProductRepository = ProductRepository(api)
-        val factory: ProductViewModelFactory = ProductViewModelFactory(repository)
+        // Recycler setup
+        adapter = HorizontalTileAdapter(mutableListOf())
+        binding.recyclerRecentlyViewed.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerRecentlyViewed.adapter = adapter
+
+        val dao = DatabaseModule.getDatabase(requireContext()).productDao()
+        val repository = LocalProductRepository(dao)
+        val factory = ProductViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[ProductViewModel::class.java]
 
-        recentSearchedRecycler = view.findViewById<RecyclerView>(R.id.recycler_recently_viewed)
-        recentSearchedRecycler.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL, false
-        )
+        // Example recent barcodes
+        val recentBarcodes = listOf("4800361410816", "4800092113338")
 
-        adapter = HorizontalTileAdapter(mutableListOf())
-        recentSearchedRecycler.adapter = adapter
+        lifecycleScope.launch {
+            recentBarcodes.forEach { barcode ->
+                val product = repository.getProductByBarcode(barcode)
 
-        /**
-        val recentlySearchedItems: List<HorizontalFoodTile> =
-        listOf(
-        HorizontalFoodTile("1", "SKY FLAKES", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("2", "MILO", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("3", "QUAKES", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("4", "AAA", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("5", "AA", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("6", "312as", R.drawable.ic_launcher_foreground)
-        )
-
-        recentSearchedRecycler.adapter = HorizontalTileAdapter(recentlySearchedItems)
-         * */
-
-        viewModel.product.observe(viewLifecycleOwner) { product ->
-            product?.let {
-                val tile = HorizontalFoodTile(
-                    id = it.productName,
-                    name = it.productName,
-                    image = R.drawable.ic_launcher_foreground
-                )
-                adapter.addItem(tile)
+                product?.let {
+                    val tile = HorizontalFoodTile(
+                        id = it.code,
+                        name = it.name ?: "Unknown",
+                        image = R.drawable.ic_launcher_foreground
+                    )
+                    adapter.addItem(tile)
+                }
             }
         }
-        val recentBarcodes = listOf("4800361410816", "4800092113338")
-        //fetch
-        recentBarcodes.forEach { barcode ->
-            viewModel.fetchProduct(barcode)
+    }
 
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
