@@ -1,16 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 android {
     namespace = "com.bitewise.app"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
+
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
 
     defaultConfig {
@@ -34,14 +33,22 @@ android {
         }
     }
 
+    androidResources {
+        noCompress += "db"
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            exclude(group = "com.intellij", module = "annotations")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 
 }
-
-
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -57,9 +64,14 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.kotlinx.coroutines)
     implementation(libs.lifecycle.viewmodel)
+    
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    
+    implementation(libs.coil)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
 }
