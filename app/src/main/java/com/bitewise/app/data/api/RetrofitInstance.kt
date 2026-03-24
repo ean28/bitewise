@@ -1,4 +1,4 @@
-package com.bitewise.app.data.network
+package com.bitewise.app.data.api
 
 import com.bitewise.app.BuildConfig
 import okhttp3.OkHttpClient
