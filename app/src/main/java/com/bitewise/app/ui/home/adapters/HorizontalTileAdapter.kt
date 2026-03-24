@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.R
 
 data class HorizontalFoodTile (
-    val id: String,
+    val id: String?,
     val name: String,
     val image: Int
     // add button maybe
