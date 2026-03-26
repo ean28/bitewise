@@ -3,11 +3,13 @@ package com.bitewise.app.ui.search.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.placeholder
+import coil3.request.error
 import com.bitewise.app.R
-import com.bitewise.app.model.Product
+import com.bitewise.app.domain.Product
 import com.bitewise.app.databinding.ItemTileSearchItemsBinding
 import com.bitewise.app.ui.search.util.ScoreMapper
-import coil.load
 
 class SearchTileAdapter(
     private val onClick: ((Product) -> Unit)? = null
@@ -29,11 +31,11 @@ class SearchTileAdapter(
             }
 
             binding.lblSearchNutriscore.setImageResource(
-                ScoreMapper.getNutriDrawable(product.nutritionGrade)
+                ScoreMapper.getNutriDrawable(product.productScores?.nutritionGrade)
             )
 
             binding.lblSearchNovascore.setImageResource(
-                ScoreMapper.getNovaDrawable(product.novaGroup)
+                ScoreMapper.getNovaDrawable(product.productScores?.novaGroup)
             )
 
             binding.lblSearchGreenscore.setImageResource(

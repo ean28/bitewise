@@ -2,7 +2,7 @@ package com.bitewise.app.ui.product
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bitewise.app.model.Product
+import com.bitewise.app.domain.Product
 import com.bitewise.app.data.repository.LocalProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,15 +12,15 @@ class ProductViewModel(
     private val repository: LocalProductRepository
 ) : ViewModel() {
 
-    // ✅ Single product (Home / Details)
+    // VM uses local database only temporarily with no API calls
+    // TODO("add api calls to update database")
+
     private val _product = MutableStateFlow<Product?>(null)
     val product: StateFlow<Product?> = _product
 
-    // ✅ Search results (NON-null list)
     private val _searchResults = MutableStateFlow<List<Product>>(emptyList())
     val searchResults: StateFlow<List<Product>> = _searchResults
 
-    // ✅ Fetch single product (barcode)
     fun fetchProduct(barcode: String) {
         viewModelScope.launch {
             val result = repository.getProductByBarcode(barcode)
@@ -28,7 +28,7 @@ class ProductViewModel(
         }
     }
 
-    // ✅ Search products locally
+    // Search products locally
     fun search(query: String) {
         viewModelScope.launch {
             val results = repository.searchProducts(query)
@@ -36,6 +36,7 @@ class ProductViewModel(
         }
     }
 
+    // TODO ("add handler to switch database when user chooses from country selector")
     fun fetchAllProducts() {
         viewModelScope.launch {
             val results = repository.getAllProducts()

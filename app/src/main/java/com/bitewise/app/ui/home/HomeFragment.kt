@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bitewise.app.R
-import com.bitewise.app.data.local.di.DatabaseModule
+import com.bitewise.app.data.local.di.LocalProductDatabaseModule
 import com.bitewise.app.data.repository.LocalProductRepository
 import com.bitewise.app.databinding.FragmentHomeScreenBinding
 import com.bitewise.app.ui.home.adapters.HorizontalFoodTile
@@ -34,7 +34,7 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerRecentlyViewed.adapter = adapter
 
-        val dao = DatabaseModule.getDatabase(requireContext()).productDao()
+        val dao = LocalProductDatabaseModule.getDatabase(requireContext()).productDao()
         val repository = LocalProductRepository(dao)
         val factory = ProductViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[ProductViewModel::class.java]

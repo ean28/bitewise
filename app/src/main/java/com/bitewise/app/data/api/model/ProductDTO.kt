@@ -1,32 +1,34 @@
 package com.bitewise.app.data.api.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ProductDTO(
-    @SerializedName("product_name")
+    @SerialName("product_name")
     val productName: String?,
 
-    @SerializedName("brands")
+    @SerialName("brands")
     val brands: String?,
 
-    @SerializedName("image_front_url")
+    @SerialName("image_front_url")
     val imageUrl: String?,
 
-    @SerializedName("allergens")
+    @SerialName("allergens")
     val allergens: String?,
 
-    @SerializedName("serving_size")
+    @SerialName("serving_size")
     val servingSize: String?,
 
-    @SerializedName("nutriments")
+    @SerialName("nutriments")
     val nutriments: NutrimentsDTO?,
 
-    @SerializedName("nutriscore_grade")
+    @SerialName("nutriscore_grade")
     val nutritionGrade: String?,
 
-    @SerializedName("ecoscore_grade")
+    @SerialName("ecoscore_grade")
     val ecoScoreGrade: String?,
 
-    @SerializedName("nova_group")
+    @SerialName("nova_group")
     val novaGroup: Int?
 )

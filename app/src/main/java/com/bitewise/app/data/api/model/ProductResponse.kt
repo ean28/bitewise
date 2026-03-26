@@ -1,12 +1,14 @@
 package com.bitewise.app.data.api.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ProductResponse (
-    @SerializedName("code")
+    @SerialName("code")
     val code: String,
-    @SerializedName("product")
+    @SerialName("product")
     val product: ProductDTO?,
-    @SerializedName("status")
+    @SerialName("status")
     val status: Int
 )
