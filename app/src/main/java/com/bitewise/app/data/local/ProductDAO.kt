@@ -2,6 +2,7 @@ package com.bitewise.app.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.bitewise.app.data.local.entities.ProductEntity
 
 @Dao
 interface ProductDAO {

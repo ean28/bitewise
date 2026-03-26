@@ -1,41 +1,41 @@
-package com.bitewise.app.data.local
+package com.bitewise.app.data.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "products")
 data class ProductEntity(
+
+    // renamed variable names to use camelcase
     @PrimaryKey
     @ColumnInfo(name = "code")
     val code: String,
 
-    @SerializedName("product_name")
     @ColumnInfo(name = "product_name")
-    val product_name: String?,
+    val productName: String?,
 
-    @SerializedName("brands")
     @ColumnInfo(name = "brands")
     val brands: String?,
 
-    @SerializedName("image_front_url")
     @ColumnInfo(name = "image_front_url")
-    val image_front_url: String?,
+    val imageFrontUrl: String?,
 
-    @SerializedName("nutriscore_grade")
     @ColumnInfo(name = "nutriscore_grade")
-    val nutriscore_grade: String?,
+    val nutriscoreGrade: String?,
 
-    @SerializedName("nova_group")
     @ColumnInfo(name = "nova_group")
-    val nova_group: Int?,
+    val novaGroup: Int?,
 
-    @SerializedName("categories_tags")
+// ecoscore
     @ColumnInfo(name = "categories_tags")
-    val categories_tags: String?,
+    val categoriesTags: String?,
 
-    @SerializedName("search_text")
     @ColumnInfo(name = "search_text")
-    val search_text: String?
+    val searchText: String?
+//
+//    @ColumnInfo(name = "allergens_tags")
+//    val allergenTags: String?
+
+    //TODO("encapsulate entity fields based on relation. e.g. ProductScoresEntity, NutritionEntity, etc...")
 )
