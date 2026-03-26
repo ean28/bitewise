@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.bitewise.app.data.local.AppDatabase
+import com.bitewise.app.data.local.LocalProductDatabase
 
-object DatabaseModule {
+// renamed database name to state its purpose
+object LocalProductDatabaseModule {
     @Volatile
-    private var instance: AppDatabase? = null
+    private var instance: LocalProductDatabase? = null
 
     private val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
@@ -31,11 +32,11 @@ object DatabaseModule {
         }
     }
 
-    fun getDatabase(context: Context): AppDatabase {
+    fun getDatabase(context: Context): LocalProductDatabase {
         return instance ?: synchronized(this) {
             instance ?: Room.databaseBuilder(
                 context,
-                AppDatabase::class.java,
+                LocalProductDatabase::class.java,
                 "philippines_products_room.db"
             )
                 .createFromAsset("databases/philippines_products_room.db")
