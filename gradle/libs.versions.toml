@@ -15,7 +15,7 @@ fragNav = "2.9.7"
 retrofit = "3.0.0"
 kotlinx-serialization-json = "1.10.0"
 
-kotlin = "2.2.10"
+kotlin = "1.9.10"
 
 okhttp3 = "5.3.2"
 
@@ -55,5 +55,7 @@ coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", versio
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+#kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+#kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
