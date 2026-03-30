@@ -10,7 +10,9 @@ import com.bitewise.app.R
 import com.bitewise.app.data.local.di.LocalProductDatabaseModule
 import com.bitewise.app.data.repository.LocalProductRepository
 import com.bitewise.app.databinding.FragmentProductInformationBinding
+import com.bitewise.app.domain.Product
 import com.bitewise.app.ui.item.adapter.ProductInformationAdapter
+import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
 import com.bitewise.app.ui.product.ProductViewModel
 import com.bitewise.app.ui.product.ProductViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
@@ -47,15 +49,35 @@ class ProductInformationFragment : Fragment(R.layout.fragment_product_informatio
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.product.collectLatest { product ->
-                product?.let {
-                    val adapter = ProductInformationAdapter(it) { clickedProduct ->
-                        println("First container clicked for: ${clickedProduct.name}")
-                    }
+                product?.let { p ->
+                    val rows: List<ProductRowManager> = listOf(
+                        ProductRowManager.Header(p),
+                        ProductRowManager.FirstContainer(p),
+                        ProductRowManager.SecondContainer(p)
+                    )
+
+                    // Set up adapter
+                    val adapter = ProductInformationAdapter(
+                        rows = rows,
+                        onContainerClick = { clickedContainer ->
+                            when (clickedContainer) {
+                                is ProductRowManager.FirstContainer -> {
+                                    println("First container clicked: ${clickedContainer.product.name}")
+                                }
+                                is ProductRowManager.SecondContainer -> {
+                                    println("Second container clicked: ${clickedContainer.product.name}")
+                                }
+                                else -> {}
+                            }
+                        }
+                    )
+
                     binding.recyclerProductInformation.adapter = adapter
                 }
             }
         }
 
+        // Back button
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
