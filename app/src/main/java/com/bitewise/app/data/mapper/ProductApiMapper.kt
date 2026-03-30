@@ -16,7 +16,8 @@ fun ProductDTO.toDomain(code: String): Product = Product(
         nutritionGrade = nutritionGrade,
         ecoScoreGrade = ecoScoreGrade,
         novaGroup = novaGroup
-    )
+    ),
+    allergenTags = allergens
 )
 
 fun NutrimentsDTO.toDomain(): Nutriments = Nutriments(

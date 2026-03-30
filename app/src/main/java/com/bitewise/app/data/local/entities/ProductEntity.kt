@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "products")
 data class ProductEntity(
 
-    // renamed variable names to use camelcase
     @PrimaryKey
     @ColumnInfo(name = "code")
     val code: String,
@@ -27,15 +26,17 @@ data class ProductEntity(
     @ColumnInfo(name = "nova_group")
     val novaGroup: Int?,
 
-// ecoscore
     @ColumnInfo(name = "categories_tags")
     val categoriesTags: String?,
 
     @ColumnInfo(name = "search_text")
-    val searchText: String?
-//
-//    @ColumnInfo(name = "allergens_tags")
-//    val allergenTags: String?
+    val searchText: String?,
+
+    @ColumnInfo(name = "allergens_tags")
+    val allergenTags: String?,
+
+    @ColumnInfo(name = "nutriments_json")
+    val nutriments: String?
 
     //TODO("encapsulate entity fields based on relation. e.g. ProductScoresEntity, NutritionEntity, etc...")
 )

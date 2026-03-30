@@ -8,12 +8,13 @@ fun ProductEntity.toDomain(): Product = Product(
     code = this.code,
     name = this.productName ?: "Unknown",
     imageUrl = this.imageFrontUrl,
-    productNutriments = null,
     productScores = Scores(
         nutritionGrade = nutriscoreGrade,
         ecoScoreGrade = null,
         novaGroup = novaGroup
-    )
+    ),
+    allergenTags = this.allergenTags,
+    productNutriments = null
 )
 
 //    calories = null,
@@ -34,6 +35,7 @@ fun Product.toEntity(): ProductEntity = ProductEntity(
     nutriscoreGrade = productScores?.nutritionGrade,
     novaGroup = productScores?.novaGroup,
     categoriesTags = null,
-    searchText = null
-//    allergenTags = this.allergenTags
+    searchText = null,
+    allergenTags = allergenTags,
+    nutriments = null
 )

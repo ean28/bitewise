@@ -23,6 +23,8 @@ object LocalProductDatabaseModule {
                     `nova_group` INTEGER, 
                     `categories_tags` TEXT, 
                     `search_text` TEXT, 
+                    `allergens_tags` TEXT,
+                    `nutriments_json` TEXT,
                     PRIMARY KEY(`code`)
                 )
             """.trimIndent())
@@ -37,9 +39,9 @@ object LocalProductDatabaseModule {
             instance ?: Room.databaseBuilder(
                 context,
                 LocalProductDatabase::class.java,
-                "philippines_products_room.db"
+                "philippines_products_cleaned_FINAL.db"
             )
-                .createFromAsset("databases/philippines_products_room.db")
+                .createFromAsset("databases/philippines_products_cleaned_FINAL.db")
                 .addMigrations(MIGRATION_1_2)
                 .fallbackToDestructiveMigration()
                 .build().also { instance = it }
