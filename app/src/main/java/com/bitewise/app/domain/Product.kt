@@ -6,6 +6,7 @@ data class Product(
     val imageUrl: String?,
 
     val productNutriments: Nutriments?,
-    val productScores: Scores?
-//    val allergenTags: String?
+    val productScores: Scores?,
+    val allergenTags: String?,
+
 )

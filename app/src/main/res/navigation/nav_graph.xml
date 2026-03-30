@@ -17,6 +17,16 @@
         android:name="com.bitewise.app.ui.search.SearchFragment"
         android:label="Search"
         tools:layout="@layout/fragment_search_screen" >
+        <action
+            android:id="@+id/action_nav_search_to_productInformationFragment"
+            app:destination="@id/productInformationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/productInformationFragment"
+        android:name="com.bitewise.app.ui.item.ProductInformationFragment"
+        android:label="Product Details"
+        tools:layout="@layout/fragment_product_information">
     </fragment>
 
 </navigation>

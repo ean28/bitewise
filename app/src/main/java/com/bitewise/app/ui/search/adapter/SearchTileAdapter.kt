@@ -3,12 +3,9 @@ package com.bitewise.app.ui.search.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
-import coil3.request.placeholder
-import coil3.request.error
-import com.bitewise.app.R
 import com.bitewise.app.domain.Product
 import com.bitewise.app.databinding.ItemTileSearchItemsBinding
+import com.bitewise.app.ui.helper.loadImage
 import com.bitewise.app.ui.search.util.ScoreMapper
 
 class SearchTileAdapter(
@@ -22,13 +19,8 @@ class SearchTileAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: Product) {
-
-            binding.txtSearchTileName.text = product.name ?: "Unknown"
-
-            binding.imgSearchTile.load(product.imageUrl) {
-                placeholder(R.drawable.ic_launcher_foreground)
-                error(R.drawable.ic_launcher_foreground)
-            }
+            binding.txtSearchTileName.text = product.name
+            binding.imgSearchTile.loadImage(product.imageUrl)
 
             binding.lblSearchNutriscore.setImageResource(
                 ScoreMapper.getNutriDrawable(product.productScores?.nutritionGrade)

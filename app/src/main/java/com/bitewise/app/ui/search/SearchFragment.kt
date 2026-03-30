@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bitewise.app.R
 import com.bitewise.app.data.local.di.LocalProductDatabaseModule
@@ -36,9 +37,15 @@ class SearchFragment : Fragment(R.layout.fragment_search_screen) {
         val factory = ProductViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[ProductViewModel::class.java]
 
-        //for click handling
-        adapter = SearchTileAdapter { product ->
-            println("Clicked: ${product.name}")
+        adapter = SearchTileAdapter { selectedProduct ->
+            val bundle = Bundle().apply {
+                putString("arg_barcode", selectedProduct.code)
+            }
+
+            findNavController().navigate(
+                R.id.action_nav_search_to_productInformationFragment,
+                bundle
+            )
         }
 
         binding.recyclerFoodGrid.layoutManager =
@@ -47,7 +54,6 @@ class SearchFragment : Fragment(R.layout.fragment_search_screen) {
 
         viewModel.fetchAllProducts()
 
-        // for country selection TODO("make this adaptive")
         val phFlag = CountryList.COUNTRIES.first {
             it.name == "Philippines"
         }.flag
@@ -71,27 +77,16 @@ class SearchFragment : Fragment(R.layout.fragment_search_screen) {
             binding.countryDropdown.showDropDown()
         }
 
-
-        // real time search
-//        binding.searchInput.doAfterTextChanged { text ->
-//            val query = text.toString()
-//            if (query.isNotBlank()) {
-//                viewModel.search(query)
-//            }
-//        }
-
-
         lifecycleScope.launch {
             viewModel.searchResults.collectLatest { results ->
                 adapter.setItems(results)
-
                 binding.txtSearchResults.text = "${results.size} results found"
             }
         }
     }
 
     private fun filterResultsByCountry(countryName: String) {
-        // TODO("add a complete dataset")
+        // TODO: implement filtering logic
     }
 
     override fun onDestroyView() {
