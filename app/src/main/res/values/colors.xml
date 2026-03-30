@@ -17,4 +17,20 @@
 
     <color name="botNavDefault">#FFFFFF</color>
     <color name="botNavRipple">#BEE2C1</color>
+
+    <!--FOR NUTRI,ECO VALUES-->
+    <color name="grade_a">#1E8F4E</color>
+    <color name="grade_b">#2ECC71</color>
+    <color name="grade_c">#F5C100</color>
+    <color name="grade_d">#F6B67F</color>
+    <color name="grade_e">#E63312</color>
+    <color name="grade_f">#FF0000</color>
+
+    <!--FOR NOVA VALUES-->
+    <color name="nova_a">#00AA00</color>
+    <color name="nova_b">#FFCC00</color>
+    <color name="nova_c">#FF6600</color>
+    <color name="nova_d">#00AA00</color>
+
+
 </resources>

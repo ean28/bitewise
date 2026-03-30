@@ -10,4 +10,30 @@
         <item quantity="other">%d results found</item>
     </plurals>
 
+    <string name="learn_more_clickable"><u>Learn More...</u></string>
+
+    <!--GRADE COMMENTS-->
+    <string-array name="nutritional_grade_comments">
+        <item>Highest nutritional quality</item> <!-- A -->
+        <item>Good nutritional quality</item> <!-- B -->
+        <item>Fair nutritional quality</item> <!-- C -->
+        <item>Poor nutritional quality</item> <!-- D -->
+        <item>Lowest nutritional quality</item> <!-- E -->
+    </string-array>
+
+    <string-array name="eco_grade_comments">
+        <item>Lowest environmental impact</item> <!-- A -->
+        <item>Favorable environmental impact</item> <!-- B -->
+        <item>Moderate environmental impact</item> <!-- C -->
+        <item>High environmental impact</item> <!-- D -->
+        <item>Highest environmental impact</item> <!-- E -->
+    </string-array>
+
+    <string-array name="nova_grade_comments">
+        <item>Unprocessed/minimally processed foods</item> <!-- 1 -->
+        <item>Processed culinary ingredients</item> <!-- 2 -->
+        <item>Processed Foods</item> <!-- 3 -->
+        <item>Ultra-Processed Foods</item> <!-- 4 -->
+    </string-array>
+
 </resources>
