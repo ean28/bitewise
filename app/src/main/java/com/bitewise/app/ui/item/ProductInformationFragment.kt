@@ -10,7 +10,6 @@ import com.bitewise.app.R
 import com.bitewise.app.data.local.di.LocalProductDatabaseModule
 import com.bitewise.app.data.repository.LocalProductRepository
 import com.bitewise.app.databinding.FragmentProductInformationBinding
-import com.bitewise.app.domain.Product
 import com.bitewise.app.ui.item.adapter.ProductInformationAdapter
 import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
 import com.bitewise.app.ui.product.ProductViewModel

@@ -1,5 +1,6 @@
 package com.bitewise.app.ui.item.adapter.rows
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerFirstBinding
 import com.bitewise.app.ui.search.util.ScoreMapper
@@ -24,7 +25,18 @@ class FirstContainerViewHolder(
         )
 
         binding.txtSummaryContainer.setOnClickListener {
-            onClick?.invoke(row)
+            //COLLAPSE CONTAINER
+            binding.scoresLayout.visibility =
+                if(binding.scoresLayout.visibility == View.VISIBLE)
+                    View.GONE else View.VISIBLE
+
+            // ARROW
+            val targetRotation =
+                if (binding.ivArrow.rotation == 90f) 0f else 90f
+            binding.ivArrow.animate()
+                .rotation(targetRotation)
+                .setDuration(200)
+                .start()
         }
     }
 }
