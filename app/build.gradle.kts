@@ -36,7 +36,7 @@ android {
     }
 
     androidResources {
-        noCompress += "db"
+        //noCompress += "db"
     }
 
     configurations.all {
@@ -73,7 +73,9 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
 
     implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.media3.common.ktx)
     ksp(libs.androidx.room.compiler)
     
     implementation(libs.coil)
