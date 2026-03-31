@@ -4,6 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerFirstBinding
 import com.bitewise.app.ui.search.util.ScoreMapper
+import androidx.core.view.isVisible
 
 class FirstContainerViewHolder(
     private val binding: ProductContainerFirstBinding
@@ -27,7 +28,7 @@ class FirstContainerViewHolder(
         binding.txtSummaryContainer.setOnClickListener {
             //COLLAPSE CONTAINER
             binding.scoresLayout.visibility =
-                if(binding.scoresLayout.visibility == View.VISIBLE)
+                if(binding.scoresLayout.isVisible)
                     View.GONE else View.VISIBLE
 
             // ARROW

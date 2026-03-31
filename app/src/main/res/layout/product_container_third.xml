@@ -33,10 +33,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Nutritional"
+                android:fontFamily="@font/inter_medium"
+                android:text="Food Processing"
                 android:textColor="#000000"
-                android:textSize="18sp"
-                android:fontFamily="@font/inter_medium"/>
+                android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/iv_arrow"
@@ -49,7 +49,7 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/nutrition_row"
+            android:id="@+id/row_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
@@ -62,7 +62,7 @@
             app:layout_constraintTop_toBottomOf="@id/title_row">
 
             <LinearLayout
-                android:id="@+id/nutrition_content_container"
+                android:id="@+id/content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -73,11 +73,11 @@
 
                 <!-- NutriScore Image -->
                 <ImageView
-                    android:id="@+id/iv_nutri_score"
+                    android:id="@+id/iv_score"
                     android:layout_width="90dp"
                     android:layout_height="75dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/grade_nutriscore_none"/>
+                    android:src="@drawable/grade_novagroup_none"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -92,15 +92,14 @@
                         android:gravity="center_vertical">
 
                         <TextView
-                            android:id="@+id/tv_nutri_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Nutritional Score: "
+                            android:text="Nova Score: "
                             android:textColor="#000000"
                             android:textSize="14sp"/>
 
                         <TextView
-                            android:id="@+id/tv_nutri_grade"
+                            android:id="@+id/txt_grade"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="None"
@@ -109,10 +108,10 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/tv_nutri_description"
+                        android:id="@+id/txt_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Unknown nutritional quality"
+                        android:text="Unknown food processing"
                         android:textColor="@color/grade_none"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp"/>
@@ -122,13 +121,13 @@
 
             <!--  explanation text -->
             <TextView
-                android:id="@+id/txt_nutrition_exp"
+                android:id="@+id/txt_exp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/grade_nutriscore_description"
+                android:text="@string/grade_nova_description"
                 android:textSize="10sp"
                 android:fontFamily="@font/inter_regular"
-                app:layout_constraintTop_toBottomOf="@id/nutrition_content_container"
+                app:layout_constraintTop_toBottomOf="@id/content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="8dp"/>
@@ -143,7 +142,7 @@
                 android:textSize="11sp"
                 android:fontFamily="@font/inter_regular"
                 android:clickable="true"
-                app:layout_constraintTop_toBottomOf="@id/txt_nutrition_exp"
+                app:layout_constraintTop_toBottomOf="@id/txt_exp"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="4dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
