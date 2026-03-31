@@ -10,6 +10,12 @@ import com.bitewise.app.databinding.ProductContainerSecondBinding
 import com.bitewise.app.databinding.ProductContainerThirdBinding
 import com.bitewise.app.databinding.ProductContainerFourthBinding
 import com.bitewise.app.ui.item.adapter.rows.*
+import com.bitewise.app.ui.item.adapter.rows.containers.FirstContainerViewHolder
+import com.bitewise.app.ui.item.adapter.rows.containers.FourthContainerViewHolder
+import com.bitewise.app.ui.item.adapter.rows.containers.HeaderViewHolder
+import com.bitewise.app.ui.item.adapter.rows.containers.NutritionContainerViewHolder
+import com.bitewise.app.ui.item.adapter.rows.containers.SecondContainerViewHolder
+import com.bitewise.app.ui.item.adapter.rows.containers.ThirdContainerViewHolder
 
 class ProductInformationAdapter(
     private val rows: List<ProductRowManager>,
@@ -37,22 +43,46 @@ class ProductInformationAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
             VIEW_TYPE_HEADER -> HeaderViewHolder(
-                ProductContainerHeadBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ProductContainerHeadBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
             VIEW_TYPE_FIRST_CONTAINER -> FirstContainerViewHolder(
-                ProductContainerFirstBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ProductContainerFirstBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
             VIEW_TYPE_SECOND_CONTAINER -> SecondContainerViewHolder(
-                ProductContainerSecondBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ProductContainerSecondBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
             VIEW_TYPE_THIRD_CONTAINER -> ThirdContainerViewHolder(
-                ProductContainerThirdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ProductContainerThirdBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
             VIEW_TYPE_FOURTH_CONTAINER -> FourthContainerViewHolder(
-                ProductContainerFourthBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ProductContainerFourthBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
             VIEW_TYPE_NUTRITION_CONTAINER -> NutritionContainerViewHolder(
-                ProductContainerNutritionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ProductContainerNutritionBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
             else -> throw IllegalArgumentException("Unknown view type $viewType")
         }

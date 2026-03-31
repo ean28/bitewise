@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.item.adapter.rows
+package com.bitewise.app.ui.item.adapter.rows.containers
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerHeadBinding

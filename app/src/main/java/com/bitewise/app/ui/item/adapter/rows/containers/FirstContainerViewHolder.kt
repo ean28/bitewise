@@ -1,10 +1,11 @@
-package com.bitewise.app.ui.item.adapter.rows
+package com.bitewise.app.ui.item.adapter.rows.containers
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerFirstBinding
 import com.bitewise.app.ui.search.util.ScoreMapper
 import androidx.core.view.isVisible
+import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
 
 class FirstContainerViewHolder(
     private val binding: ProductContainerFirstBinding

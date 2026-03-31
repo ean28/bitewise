@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.item.adapter.rows
+package com.bitewise.app.ui.item.adapter.rows.containers
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -6,6 +6,7 @@ import com.bitewise.app.databinding.ProductContainerSecondBinding
 import com.bitewise.app.ui.search.util.ScoreMapper
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
+import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
 
 class SecondContainerViewHolder(
     private val binding: ProductContainerSecondBinding

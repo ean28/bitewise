@@ -1,32 +1,33 @@
-package com.bitewise.app.ui.item.adapter.rows
+package com.bitewise.app.ui.item.adapter.rows.containers
 
 import android.view.View
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.bitewise.app.databinding.ProductContainerFourthBinding
+import com.bitewise.app.databinding.ProductContainerThirdBinding
+import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
 import com.bitewise.app.ui.search.util.ScoreMapper
 
-class FourthContainerViewHolder(
-    private val binding: ProductContainerFourthBinding
+class ThirdContainerViewHolder(
+    private val binding: ProductContainerThirdBinding
 ): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(
-        row: ProductRowManager.FourthContainer,
-        onClick: ((ProductRowManager.FourthContainer) -> Unit)? = null
+        row: ProductRowManager.ThirdContainer,
+        onClick: ((ProductRowManager.ThirdContainer) -> Unit)? = null
     ) {
         val product = row.product
         val context = binding.root.context
-        val ecoScore = product.productScores?.ecoScoreGrade ?: "None"
+        val novaGroup = product.productScores?.novaGroup
 
         binding.ivScore.setImageResource(
-            ScoreMapper.getEcoDrawable(ecoScore))
+            ScoreMapper.getNovaDrawable(novaGroup))
 
-        val colorRes = GradeTypes.ECO_SCORE.getColor(ecoScore)
+        val colorRes = GradeTypes.NOVA_SCORE.getColor(novaGroup)
         val colorInt = getColor(context, colorRes)
-        val description = GradeTypes.ECO_SCORE.getComment(ecoScore, context.resources)
+        val description = GradeTypes.NOVA_SCORE.getComment(novaGroup, context.resources)
 
-        binding.txtGrade.text = ecoScore
+        binding.txtGrade.text = novaGroup.toString()
         binding.txtGrade.setTextColor(getColor(context, colorRes))
         binding.txtDescription.text = description
         binding.txtDescription.setTextColor(colorInt)

@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.item.adapter.rows
+package com.bitewise.app.ui.item.adapter.rows.containers
 
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -8,6 +8,7 @@ import com.bitewise.app.databinding.ProductContainerNutritionBinding
 import com.bitewise.app.ui.item.adapter.ProductNutritionTableAdapter
 import com.bitewise.app.ui.item.adapter.helpers.DefaultNutritionTable
 import com.bitewise.app.ui.item.adapter.helpers.TableLayoutHelper
+import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
 
 class NutritionContainerViewHolder(
     private val binding: ProductContainerNutritionBinding
