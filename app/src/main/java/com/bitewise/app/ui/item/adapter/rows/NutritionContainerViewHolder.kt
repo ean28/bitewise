@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.R
 import com.bitewise.app.databinding.ProductContainerNutritionBinding
 import com.bitewise.app.ui.item.adapter.ProductNutritionTableAdapter
+import com.bitewise.app.ui.item.adapter.helpers.DefaultNutritionTable
 import com.bitewise.app.ui.item.adapter.helpers.TableLayoutHelper
 
 class NutritionContainerViewHolder(
@@ -15,29 +16,25 @@ class NutritionContainerViewHolder(
     fun bind(row: ProductRowManager.NutritionContainer) {
         val context = binding.root.context
 
-        val headers = listOf("Nutrient", "As sold for 100 g")
-        val mockRows = listOf(
-            listOf("Energy", "450kcal"),
-            listOf("Fat", "20.5g"),
-            listOf("Saturated Fat", "5.2g"),
-            listOf("Carbohydrates", "60.0g"),
-            listOf("Sugars", "12.0g"),
-            listOf("Proteins", "8.5g"),
-            listOf("Salt", "1.2g"),
-            listOf("Proteins", "8.5g"),
-            listOf("Salt", "1.2g"),
-            listOf("Proteins", "8.5g"),
-            listOf("Salt", "1.2g"),
-            listOf("Proteins", "8.5g"),
-            listOf("Salt", "1.2g"),
-            listOf("Salt", "1.2g"),
-            listOf("Salt", "1.2g"),
-            listOf("Salt", "1.2g"),
-            listOf("Salt", "1.2g"),
-            listOf("Salt", "1.2g")
-        )
+        // Fetch nutrients or fall back to the Default Factory if null/empty
+        val rawNutrients = row.product.productNutriments
+        val nutrientsList = if (rawNutrients.isNullOrEmpty()) {
+            DefaultNutritionTable.createEmptyState()
+        } else {
+            rawNutrients
+        }
 
-        val allFirstColumnTexts = mockRows.map { it[0] } + headers[0]
+        val dataRows = nutrientsList.map { nutrient ->
+            val isUnknown = nutrient.unit == "unknown"
+            listOf(
+                nutrient.name,
+                if (isUnknown) "<i>Unavailable</i>" else "${nutrient.amount} ${nutrient.unit}"
+            )
+        }
+
+        val headers = listOf("Nutrient", "As sold for 100 g")
+
+        val allFirstColumnTexts = dataRows.map { it[0] } + headers[0]
         val maxWidth = TableLayoutHelper.calculateMaxColumnWidth(
             context,
             allFirstColumnTexts,
@@ -45,7 +42,7 @@ class NutritionContainerViewHolder(
         )
 
         TableLayoutHelper.populateRow(
-            container = binding.tableRowContainer,
+            container = binding.tableColumnContainer,
             items = headers,
             firstColumnWidth = maxWidth,
             styleRes = R.style.table_row_item
@@ -55,7 +52,7 @@ class NutritionContainerViewHolder(
         val adapter = ProductNutritionTableAdapter()
         binding.tableRecyclerView.adapter = adapter
 
-        adapter.updateData(mockRows, maxWidth)
+        adapter.updateData(dataRows, maxWidth)
 
         binding.txtSummaryContainer.setOnClickListener {
             val isCurrentlyVisible = binding.nutriContainer.isVisible
