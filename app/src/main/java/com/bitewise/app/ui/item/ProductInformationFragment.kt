@@ -52,7 +52,10 @@ class ProductInformationFragment : Fragment(R.layout.fragment_product_informatio
                     val rows: List<ProductRowManager> = listOf(
                         ProductRowManager.Header(p),
                         ProductRowManager.FirstContainer(p),
-                        ProductRowManager.SecondContainer(p)
+                        ProductRowManager.SecondContainer(p),
+                        ProductRowManager.ThirdContainer(p),
+                        ProductRowManager.FourthContainer(p),
+                        ProductRowManager.NutritionContainer(p)
                     )
 
                     // Set up adapter
@@ -65,6 +68,12 @@ class ProductInformationFragment : Fragment(R.layout.fragment_product_informatio
                                 }
                                 is ProductRowManager.SecondContainer -> {
                                     println("Second container clicked: ${clickedContainer.product.name}")
+                                }
+                                is ProductRowManager.ThirdContainer -> {
+                                    println("Third container clicked: ${clickedContainer.product.name}")
+                                }
+                                is ProductRowManager.FourthContainer -> {
+                                    println("Third container clicked: ${clickedContainer.product.name}")
                                 }
                                 else -> {}
                             }

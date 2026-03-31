@@ -5,22 +5,22 @@ import com.bitewise.app.R
 object ScoreMapper {
 
     fun getNutriDrawable(grade: String?): Int =
-        when (grade?.lowercase()) {
-        "a" -> R.drawable.grade_nutriscore_a
-        "b" -> R.drawable.grade_nutriscore_b
-        "c" -> R.drawable.grade_nutriscore_c
-        "d" -> R.drawable.grade_nutriscore_d
-        "e" -> R.drawable.grade_nutriscore_e
+        when (grade?.uppercase()) {
+        "A" -> R.drawable.grade_nutriscore_a
+        "B" -> R.drawable.grade_nutriscore_b
+        "C" -> R.drawable.grade_nutriscore_c
+        "D" -> R.drawable.grade_nutriscore_d
+        "E" -> R.drawable.grade_nutriscore_e
         else -> R.drawable.grade_nutriscore_none
     }
 
     fun getEcoDrawable(grade: String?): Int =
-        when (grade?.lowercase()) {
-        "a" -> R.drawable.grade_greenscore_a
-        "b" -> R.drawable.grade_greenscore_b
-        "c" -> R.drawable.grade_greenscore_c
-        "d" -> R.drawable.grade_greenscore_d
-        "e" -> R.drawable.grade_greenscore_e
+        when (grade?.uppercase()) {
+        "A" -> R.drawable.grade_greenscore_a
+        "B" -> R.drawable.grade_greenscore_b
+        "C" -> R.drawable.grade_greenscore_c
+        "D" -> R.drawable.grade_greenscore_d
+        "E" -> R.drawable.grade_greenscore_e
         else -> R.drawable.grade_greenscore_none
     }
 
