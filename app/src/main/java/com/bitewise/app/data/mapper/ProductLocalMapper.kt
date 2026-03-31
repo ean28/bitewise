@@ -14,17 +14,8 @@ fun ProductEntity.toDomain(): Product = Product(
         novaGroup = novaGroup
     ),
     allergenTags = this.allergenTags,
-    productNutriments = null
+    productNutriments = NutrientsMapper.mapJsonToNutrientList(this.nutriments)
 )
-
-//    calories = null,
-//    fat = null,
-//    saturatedFat = null,
-//    carbohydrates = null,
-//    sugars = null,
-//    proteins = null,
-//    salt = null,
-
 //TODO("Refactor based on changes in product domain")
 
 fun Product.toEntity(): ProductEntity = ProductEntity(

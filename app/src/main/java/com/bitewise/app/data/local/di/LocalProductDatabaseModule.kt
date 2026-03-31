@@ -2,11 +2,13 @@ package com.bitewise.app.data.local.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.bitewise.app.data.local.LocalProductDatabase
+import com.bitewise.app.data.local.converter.NutrimentsConverter
 
-// renamed database name to state its purpose
+@TypeConverters(NutrimentsConverter::class)
 object LocalProductDatabaseModule {
     @Volatile
     private var instance: LocalProductDatabase? = null

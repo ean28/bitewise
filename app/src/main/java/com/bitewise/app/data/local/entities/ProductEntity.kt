@@ -3,8 +3,12 @@ package com.bitewise.app.data.local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.bitewise.app.data.local.converter.NutrimentsConverter
+import kotlinx.serialization.json.JsonElement
 
 @Entity(tableName = "products")
+@TypeConverters(NutrimentsConverter::class)
 data class ProductEntity(
 
     @PrimaryKey
@@ -36,7 +40,7 @@ data class ProductEntity(
     val allergenTags: String?,
 
     @ColumnInfo(name = "nutriments_json")
-    val nutriments: String?
+    val nutriments: Map<String, JsonElement>?
 
     //TODO("encapsulate entity fields based on relation. e.g. ProductScoresEntity, NutritionEntity, etc...")
 )
