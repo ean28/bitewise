@@ -12,28 +12,35 @@
 
     <string name="learn_more_clickable"><u>Learn More...</u></string>
 
+    <!-- DESCRIPTION -->
+    <string name="grade_nova_description">Nova Score is a classification system that categorizes food products into four groups based on the extent and purpose of industrial processing, from unprocessed to ultra-processed (1-4). Unlike Nutri-Score, which focuses on nutrient content, it helps consumers identify how much a food has been altered by industrial additives and manufacturing techniques.</string>
+    <string name="grade_nutriscore_description">Nutri-Score is a front-of-pack labeling system that converts the nutritional value of products into a simple code consisting of 5 letters (A to E) and 5 colors (dark green to dark orange). It is designed to help consumers compare the nutritional quality of similar food items at a glance.</string>
+    <string name="grade_eco_description">Eco-Score is a labeling system that rates the environmental impact of a food product throughout its entire life cycle, from farming and processing to transport and packaging. It uses a color-coded scale from A (low impact) to E (high impact) to help consumers choose products that are more sustainable for the planet.</string>
+
     <!--GRADE COMMENTS-->
     <string-array name="nutritional_grade_comments">
-        <item>Highest nutritional quality</item> <!-- A -->
-        <item>Good nutritional quality</item> <!-- B -->
-        <item>Fair nutritional quality</item> <!-- C -->
-        <item>Poor nutritional quality</item> <!-- D -->
-        <item>Lowest nutritional quality</item> <!-- E -->
+        <item>Unknown nutritional quality</item>           <!-- None -->
+        <item>Highest nutritional quality</item>            <!-- A -->
+        <item>Good nutritional quality</item>               <!-- B -->
+        <item>Fair nutritional quality</item>            <!-- C -->
+        <item>Poor nutritional quality</item>               <!-- D -->
+        <item>Lowest nutritional quality</item>             <!-- E -->
     </string-array>
 
     <string-array name="eco_grade_comments">
-        <item>Lowest environmental impact</item> <!-- A -->
-        <item>Favorable environmental impact</item> <!-- B -->
-        <item>Moderate environmental impact</item> <!-- C -->
-        <item>High environmental impact</item> <!-- D -->
-        <item>Highest environmental impact</item> <!-- E -->
+        <item>Unknown environmental impact</item>           <!-- None -->
+        <item>Lowest environmental impact</item>            <!-- A -->
+        <item>Favorable environmental impact</item>         <!-- B -->
+        <item>Moderate environmental impact</item>          <!-- C -->
+        <item>High environmental impact</item>              <!-- D -->
     </string-array>
 
     <string-array name="nova_grade_comments">
-        <item>Unprocessed/minimally processed foods</item> <!-- 1 -->
-        <item>Processed culinary ingredients</item> <!-- 2 -->
-        <item>Processed Foods</item> <!-- 3 -->
-        <item>Ultra-Processed Foods</item> <!-- 4 -->
+        <item>Unknown processing level</item>               <!-- None -->
+        <item>Unprocessed/minimally processed foods</item>  <!-- 1 -->
+        <item>Processed culinary ingredients</item>         <!-- 2 -->
+        <item>Processed Foods</item>                        <!-- 3 -->
+        <item>Ultra-Processed Foods</item>                  <!-- 4 -->
     </string-array>
 
 </resources>
