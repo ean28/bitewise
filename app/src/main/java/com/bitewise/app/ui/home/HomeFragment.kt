@@ -2,64 +2,60 @@ package com.bitewise.app.ui.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.R
-import com.bitewise.app.data.local.di.LocalProductDatabaseModule
-import com.bitewise.app.data.repository.LocalProductRepository
 import com.bitewise.app.databinding.FragmentHomeScreenBinding
+import com.bitewise.app.ui.common.BaseFragment
 import com.bitewise.app.ui.common.ViewModelFactory
-import com.bitewise.app.ui.home.adapters.HorizontalFoodTile
 import com.bitewise.app.ui.home.adapters.HorizontalTileAdapter
-import com.bitewise.app.ui.product.ProductDetailViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment(R.layout.fragment_home_screen) {
+class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
+    FragmentHomeScreenBinding::inflate
+) {
 
-    private var _binding: FragmentHomeScreenBinding? = null
-    private val binding get() = _binding!!
-
-    private lateinit var viewModel: ProductDetailViewModel
+    private lateinit var viewModel: HomeViewModel
     private lateinit var adapter: HorizontalTileAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentHomeScreenBinding.bind(view)
 
         // Recycler setup
-        adapter = HorizontalTileAdapter(mutableListOf())
+        adapter = HorizontalTileAdapter { selectedProduct ->
+            val bundle = Bundle().apply {
+                putString("arg_barcode", selectedProduct.code)
+            }
+            findNavController().navigate(
+                R.id.action_nav_home_to_nav_product_detail,
+                bundle
+            )
+        }
+        
         binding.recyclerRecentlyViewed.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerRecentlyViewed.adapter = adapter
 
-        val dao = LocalProductDatabaseModule.getDatabase(requireContext()).productDao()
-        val repository = LocalProductRepository(dao)
-        val factory = ViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory)[ProductDetailViewModel::class.java]
+        val app = requireActivity().application as BiteWiseApplication
+        val factory = ViewModelFactory(app.productRepository, app.recentHistory)
+        viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
 
-        // Example recent barcodes
-        val recentBarcodes = listOf("4800361410816", "4800092113338")
-
-        lifecycleScope.launch {
-            recentBarcodes.forEach { barcode ->
-                val product = repository.getProductByBarcode(barcode)
-
-                product?.let {
-                    val tile = HorizontalFoodTile(
-                        id = it.code,
-                        name = it.name ?: "Unknown",
-                        image = R.drawable.ic_launcher_foreground
-                    )
-                    adapter.addItem(tile)
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.recentProducts.collectLatest { products ->
+                adapter.setItems(products)
+                
+                binding.recyclerRecentlyViewed.visibility =
+                    if (products.isEmpty()) View.GONE else View.VISIBLE
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadRecentItems()
     }
 }

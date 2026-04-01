@@ -1,49 +1,48 @@
 package com.bitewise.app.ui.home.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bitewise.app.R
+import com.bitewise.app.databinding.HomeItemTileHorizontalBinding
+import com.bitewise.app.domain.models.Product
+import com.bitewise.app.ui.common.util.loadImage
 
-data class HorizontalFoodTile (
-    val id: String?,
-    val name: String,
-    val image: Int
-    // add button maybe
-)
+class HorizontalTileAdapter(
+    private val onClick: ((Product) -> Unit)? = null
+) : RecyclerView.Adapter<HorizontalTileAdapter.TileViewHolder>() {
 
-class HorizontalTileAdapter (
-    private val items: MutableList<HorizontalFoodTile>
-): RecyclerView.Adapter<HorizontalTileAdapter.TileViewHolder>() {
+    private val items = mutableListOf<Product>()
 
-    class TileViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val image: ImageView = view.findViewById(R.id.img_tile)
-        val text: TextView = view.findViewById(R.id.txt_tile_name)
+    inner class TileViewHolder(
+        private val binding: HomeItemTileHorizontalBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(product: Product) {
+            binding.txtTileName.text = product.name
+            binding.imgTile.loadImage(product.imageUrl)
+
+            binding.root.setOnClickListener {
+                onClick?.invoke(product)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TileViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_tile_horizontal, parent, false)
-
-        return TileViewHolder(view)
+        val binding = HomeItemTileHorizontalBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return TileViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TileViewHolder, position: Int) {
-        val item: HorizontalFoodTile = items[position]
-        holder.text.text = item.name
-        holder.image.setImageResource(item.image)
+        holder.bind(items[position])
     }
 
     override fun getItemCount(): Int = items.size
-    fun addItem(item: HorizontalFoodTile) {
-        items.add(item)
-        notifyItemInserted(items.size - 1)
-    }
 
-    fun setItems(newItems: List<HorizontalFoodTile>) {
+    fun setItems(newItems: List<Product>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()

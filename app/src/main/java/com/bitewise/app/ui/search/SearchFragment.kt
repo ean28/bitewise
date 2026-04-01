@@ -29,8 +29,8 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val repository = (requireActivity().application as BiteWiseApplication).productRepository
-        val factory = ViewModelFactory(repository)
+        val app = (requireActivity().application as BiteWiseApplication)
+        val factory = ViewModelFactory(app.productRepository, app.recentHistory)
         viewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
 
         adapter = SearchTileAdapter { selectedProduct ->

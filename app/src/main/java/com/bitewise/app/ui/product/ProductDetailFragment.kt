@@ -32,8 +32,8 @@ class ProductDetailFragment : BaseFragment<FragmentProductInformationBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val repository = (requireActivity().application as BiteWiseApplication).productRepository
-        val factory = ViewModelFactory(repository)
+        val app = (requireActivity().application as BiteWiseApplication)
+        val factory = ViewModelFactory(app.productRepository, app.recentHistory)
         viewModel = ViewModelProvider(this, factory)[ProductDetailViewModel::class.java]
 
         binding.recyclerProductInformation.layoutManager =

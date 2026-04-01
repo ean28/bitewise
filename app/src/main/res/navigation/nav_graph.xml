@@ -10,6 +10,9 @@
         android:name="com.bitewise.app.ui.home.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home_screen" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_product_detail"
+            app:destination="@id/nav_product_detail" />
     </fragment>
 
     <fragment
