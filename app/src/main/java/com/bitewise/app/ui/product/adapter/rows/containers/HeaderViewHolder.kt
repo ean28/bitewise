@@ -1,9 +1,9 @@
-package com.bitewise.app.ui.item.adapter.rows.containers
+package com.bitewise.app.ui.product.adapter.rows.containers
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerHeadBinding
-import com.bitewise.app.domain.Product
-import com.bitewise.app.ui.helper.loadImage
+import com.bitewise.app.domain.models.Product
+import com.bitewise.app.ui.common.util.loadImage
 
 class HeaderViewHolder(
     private val binding: ProductContainerHeadBinding

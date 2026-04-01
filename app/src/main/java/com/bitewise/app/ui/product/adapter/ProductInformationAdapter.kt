@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.item.adapter
+package com.bitewise.app.ui.product.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,13 +9,13 @@ import com.bitewise.app.databinding.ProductContainerNutritionBinding
 import com.bitewise.app.databinding.ProductContainerSecondBinding
 import com.bitewise.app.databinding.ProductContainerThirdBinding
 import com.bitewise.app.databinding.ProductContainerFourthBinding
-import com.bitewise.app.ui.item.adapter.rows.*
-import com.bitewise.app.ui.item.adapter.rows.containers.FirstContainerViewHolder
-import com.bitewise.app.ui.item.adapter.rows.containers.FourthContainerViewHolder
-import com.bitewise.app.ui.item.adapter.rows.containers.HeaderViewHolder
-import com.bitewise.app.ui.item.adapter.rows.containers.NutritionContainerViewHolder
-import com.bitewise.app.ui.item.adapter.rows.containers.SecondContainerViewHolder
-import com.bitewise.app.ui.item.adapter.rows.containers.ThirdContainerViewHolder
+import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
+import com.bitewise.app.ui.product.adapter.rows.containers.FirstContainerViewHolder
+import com.bitewise.app.ui.product.adapter.rows.containers.FourthContainerViewHolder
+import com.bitewise.app.ui.product.adapter.rows.containers.HeaderViewHolder
+import com.bitewise.app.ui.product.adapter.rows.containers.NutritionContainerViewHolder
+import com.bitewise.app.ui.product.adapter.rows.containers.SecondContainerViewHolder
+import com.bitewise.app.ui.product.adapter.rows.containers.ThirdContainerViewHolder
 
 class ProductInformationAdapter(
     private val rows: List<ProductRowManager>,

@@ -1,12 +1,13 @@
-package com.bitewise.app.ui.item.adapter.rows.containers
+package com.bitewise.app.ui.product.adapter.rows.containers
 
 import android.view.View
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerFourthBinding
-import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
-import com.bitewise.app.ui.search.util.ScoreMapper
+import com.bitewise.app.ui.common.grade.GradeManager
+import com.bitewise.app.ui.common.grade.GradeTypes
+import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
 
 class FourthContainerViewHolder(
     private val binding: ProductContainerFourthBinding
@@ -21,11 +22,11 @@ class FourthContainerViewHolder(
         val ecoScore = product.productScores?.ecoScoreGrade ?: "None"
 
         binding.ivScore.setImageResource(
-            ScoreMapper.getEcoDrawable(ecoScore))
+            GradeManager.getEcoDrawable(ecoScore))
 
-        val colorRes = GradeTypes.ECO_SCORE.getColor(ecoScore)
+        val colorRes = GradeManager.getColor(GradeTypes.ECO_SCORE, ecoScore)
         val colorInt = getColor(context, colorRes)
-        val description = GradeTypes.ECO_SCORE.getComment(ecoScore, context.resources)
+        val description = GradeManager.getComment(GradeTypes.ECO_SCORE, ecoScore, context.resources)
 
         binding.txtGrade.text = ecoScore
         binding.txtGrade.setTextColor(getColor(context, colorRes))

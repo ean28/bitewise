@@ -1,11 +1,11 @@
-package com.bitewise.app.ui.item.adapter.rows.containers
+package com.bitewise.app.ui.product.adapter.rows.containers
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerFirstBinding
-import com.bitewise.app.ui.search.util.ScoreMapper
+import com.bitewise.app.ui.common.grade.GradeManager
 import androidx.core.view.isVisible
-import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
+import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
 
 class FirstContainerViewHolder(
     private val binding: ProductContainerFirstBinding
@@ -17,13 +17,13 @@ class FirstContainerViewHolder(
         val product = row.product
 
         binding.ivNutriScore.setImageResource(
-            ScoreMapper.getNutriDrawable(product.productScores?.nutritionGrade)
+            GradeManager.getNutriDrawable(product.productScores?.nutritionGrade)
         )
         binding.ivNovaScore.setImageResource(
-            ScoreMapper.getNovaDrawable(product.productScores?.novaGroup)
+            GradeManager.getNovaDrawable(product.productScores?.novaGroup)
         )
         binding.ivGreenScore.setImageResource(
-            ScoreMapper.getEcoDrawable(product.productScores?.ecoScoreGrade)
+            GradeManager.getEcoDrawable(product.productScores?.ecoScoreGrade)
         )
 
         binding.txtSummaryContainer.setOnClickListener {

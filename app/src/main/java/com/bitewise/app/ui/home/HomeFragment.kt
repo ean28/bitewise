@@ -10,10 +10,10 @@ import com.bitewise.app.R
 import com.bitewise.app.data.local.di.LocalProductDatabaseModule
 import com.bitewise.app.data.repository.LocalProductRepository
 import com.bitewise.app.databinding.FragmentHomeScreenBinding
+import com.bitewise.app.ui.common.ViewModelFactory
 import com.bitewise.app.ui.home.adapters.HorizontalFoodTile
 import com.bitewise.app.ui.home.adapters.HorizontalTileAdapter
-import com.bitewise.app.ui.product.ProductViewModel
-import com.bitewise.app.ui.product.ProductViewModelFactory
+import com.bitewise.app.ui.product.ProductDetailViewModel
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.fragment_home_screen) {
@@ -21,7 +21,7 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
     private var _binding: FragmentHomeScreenBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: ProductViewModel
+    private lateinit var viewModel: ProductDetailViewModel
     private lateinit var adapter: HorizontalTileAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,8 +36,8 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
 
         val dao = LocalProductDatabaseModule.getDatabase(requireContext()).productDao()
         val repository = LocalProductRepository(dao)
-        val factory = ProductViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory)[ProductViewModel::class.java]
+        val factory = ViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[ProductDetailViewModel::class.java]
 
         // Example recent barcodes
         val recentBarcodes = listOf("4800361410816", "4800092113338")

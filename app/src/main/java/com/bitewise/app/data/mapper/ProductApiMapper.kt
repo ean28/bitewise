@@ -1,11 +1,8 @@
 package com.bitewise.app.data.mapper
 
-import com.bitewise.app.data.api.model.NutrimentsDTO
 import com.bitewise.app.data.api.model.ProductDTO
-import com.bitewise.app.domain.Nutriments
-import com.bitewise.app.domain.Product
-import com.bitewise.app.domain.Scores
-import com.google.android.material.color.utilities.Score
+import com.bitewise.app.domain.models.Product
+import com.bitewise.app.domain.models.Scores
 
 fun ProductDTO.toDomain(code: String): Product = Product(
     code = code,
@@ -20,12 +17,12 @@ fun ProductDTO.toDomain(code: String): Product = Product(
     allergenTags = allergens
 )
 
-fun NutrimentsDTO.toDomain(): Nutriments = Nutriments(
-    energyKcal = energyKcal ?: energyKcalPrepared,
-    fat = fat ?: fatPrepared,
-    saturatedFat = saturatedFat ?: saturatedFatPrepared,
-    carbohydrates = carbohydrates ?: carbohydratesPrepared,
-    sugars = sugars ?: sugarsPrepared,
-    proteins = proteins ?: proteinsPrepared,
-    salt = salt ?: saltPrepared,
-)
+//fun NutrimentsDTO.toDomain(): Nutriments = Nutriments(
+//    energyKcal = energyKcal ?: energyKcalPrepared,
+//    fat = fat ?: fatPrepared,
+//    saturatedFat = saturatedFat ?: saturatedFatPrepared,
+//    carbohydrates = carbohydrates ?: carbohydratesPrepared,
+//    sugars = sugars ?: sugarsPrepared,
+//    proteins = proteins ?: proteinsPrepared,
+//    salt = salt ?: saltPrepared,
+//)

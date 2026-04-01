@@ -1,4 +1,4 @@
-package com.bitewise.app.domain
+package com.bitewise.app.domain.models
 
 import kotlinx.serialization.Serializable
 

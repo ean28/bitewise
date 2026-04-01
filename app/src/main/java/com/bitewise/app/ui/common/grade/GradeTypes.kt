@@ -1,3 +1,5 @@
+package com.bitewise.app.ui.common.grade
+
 import android.content.res.Resources
 import com.bitewise.app.R
 

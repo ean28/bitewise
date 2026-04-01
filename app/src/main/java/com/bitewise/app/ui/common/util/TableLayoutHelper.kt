@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.item.adapter.helpers
+package com.bitewise.app.ui.common.util
 
 import android.content.Context
 import android.text.Html
