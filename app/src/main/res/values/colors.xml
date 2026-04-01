@@ -5,6 +5,16 @@
     <color name="onboarding_description">#9CA3AF</color>
     <color name="onboarding_cta">#3CCB46</color>
     <color name="onboarding_cta_text">#FFFFFFFF</color>
+
     <color name="gradient_transparent">#00000000</color>
     <color name="gradient_black">#FF000000</color>
+
+    <color name="primaryColor">#3CCB46</color>
+    <color name="primaryDarkColor">#6D8969</color>
+    <color name="dark">#293129FF</color>
+
+    <color name="white">#FFFFFF</color>
+
+    <color name="botNavDefault">#FFFFFF</color>
+    <color name="botNavRipple">#BEE2C1</color>
 </resources>
