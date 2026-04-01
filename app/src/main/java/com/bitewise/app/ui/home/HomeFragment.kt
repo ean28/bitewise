@@ -2,69 +2,60 @@ package com.bitewise.app.ui.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.R
-import com.bitewise.app.data.network.RetrofitInstance.api
-import com.bitewise.app.data.network.repository.ProductRepository
-import com.bitewise.app.ui.home.adapters.HorizontalFoodTile
+import com.bitewise.app.databinding.FragmentHomeScreenBinding
+import com.bitewise.app.ui.common.BaseFragment
+import com.bitewise.app.ui.common.ViewModelFactory
 import com.bitewise.app.ui.home.adapters.HorizontalTileAdapter
-import com.bitewise.app.ui.product.ProductViewModel
-import com.bitewise.app.ui.product.ProductViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment(R.layout.fragment_home_screen) {
+class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
+    FragmentHomeScreenBinding::inflate
+) {
 
-    private lateinit var viewModel: ProductViewModel
+    private lateinit var viewModel: HomeViewModel
     private lateinit var adapter: HorizontalTileAdapter
-    private lateinit var recentSearchedRecycler: RecyclerView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val repository: ProductRepository = ProductRepository(api)
-        val factory: ProductViewModelFactory = ProductViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory)[ProductViewModel::class.java]
+        // Recycler setup
+        adapter = HorizontalTileAdapter { selectedProduct ->
+            val bundle = Bundle().apply {
+                putString("arg_barcode", selectedProduct.code)
+            }
+            findNavController().navigate(
+                R.id.action_nav_home_to_nav_product_detail,
+                bundle
+            )
+        }
+        
+        binding.recyclerRecentlyViewed.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerRecentlyViewed.adapter = adapter
 
-        recentSearchedRecycler = view.findViewById<RecyclerView>(R.id.recycler_recently_viewed)
-        recentSearchedRecycler.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL, false
-        )
+        val app = requireActivity().application as BiteWiseApplication
+        val factory = ViewModelFactory(app.productRepository, app.recentHistory)
+        viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
 
-        adapter = HorizontalTileAdapter(mutableListOf())
-        recentSearchedRecycler.adapter = adapter
-
-        /**
-        val recentlySearchedItems: List<HorizontalFoodTile> =
-        listOf(
-        HorizontalFoodTile("1", "SKY FLAKES", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("2", "MILO", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("3", "QUAKES", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("4", "AAA", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("5", "AA", R.drawable.ic_launcher_foreground),
-        HorizontalFoodTile("6", "312as", R.drawable.ic_launcher_foreground)
-        )
-
-        recentSearchedRecycler.adapter = HorizontalTileAdapter(recentlySearchedItems)
-         * */
-
-        viewModel.product.observe(viewLifecycleOwner) { product ->
-            product?.let {
-                val tile = HorizontalFoodTile(
-                    id = it.productName,
-                    name = it.productName,
-                    image = R.drawable.ic_launcher_foreground
-                )
-                adapter.addItem(tile)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.recentProducts.collectLatest { products ->
+                adapter.setItems(products)
+                
+                binding.recyclerRecentlyViewed.visibility =
+                    if (products.isEmpty()) View.GONE else View.VISIBLE
             }
         }
-        val recentBarcodes = listOf("4800361410816", "4800092113338")
-        //fetch
-        recentBarcodes.forEach { barcode ->
-            viewModel.fetchProduct(barcode)
+    }
 
-        }
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadRecentItems()
     }
 }
