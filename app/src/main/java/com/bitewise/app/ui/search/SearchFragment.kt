@@ -3,39 +3,35 @@ package com.bitewise.app.ui.search
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
-import androidx.fragment.app.Fragment
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bitewise.app.R
-import com.bitewise.app.data.local.di.LocalProductDatabaseModule
-import com.bitewise.app.data.repository.LocalProductRepository
+import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.databinding.FragmentSearchScreenBinding
-import com.bitewise.app.ui.product.ProductViewModel
-import com.bitewise.app.ui.product.ProductViewModelFactory
+import com.bitewise.app.ui.common.BaseFragment
+import com.bitewise.app.ui.common.UiState
+import com.bitewise.app.ui.common.ViewModelFactory
 import com.bitewise.app.ui.search.adapter.SearchTileAdapter
 import com.bitewise.app.ui.search.utils.CountryList
 import com.bitewise.app.ui.search.utils.setupCountryPicker
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SearchFragment : Fragment(R.layout.fragment_search_screen) {
+class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
+    FragmentSearchScreenBinding::inflate
+) {
 
-    private var _binding: FragmentSearchScreenBinding? = null
-    private val binding get() = _binding!!
-
-    private lateinit var viewModel: ProductViewModel
+    private lateinit var viewModel: SearchViewModel
     private lateinit var adapter: SearchTileAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentSearchScreenBinding.bind(view)
 
-        val dao = LocalProductDatabaseModule.getDatabase(requireContext()).productDao()
-        val repository = LocalProductRepository(dao)
-        val factory = ProductViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory)[ProductViewModel::class.java]
+        val repository = (requireActivity().application as BiteWiseApplication).productRepository
+        val factory = ViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
 
         adapter = SearchTileAdapter { selectedProduct ->
             val bundle = Bundle().apply {
@@ -43,7 +39,7 @@ class SearchFragment : Fragment(R.layout.fragment_search_screen) {
             }
 
             findNavController().navigate(
-                R.id.action_nav_search_to_productInformationFragment,
+                com.bitewise.app.R.id.action_nav_search_to_productDetailFragment,
                 bundle
             )
         }
@@ -52,14 +48,16 @@ class SearchFragment : Fragment(R.layout.fragment_search_screen) {
             GridLayoutManager(requireContext(), 3)
         binding.recyclerFoodGrid.adapter = adapter
 
-        viewModel.fetchAllProducts()
+        if (viewModel.searchState.value is UiState.Loading) {
+            viewModel.fetchAllProducts()
+        }
 
         val phFlag = CountryList.COUNTRIES.first {
             it.name == "Philippines"
         }.flag
 
         binding.countryDropdown.setText(
-            getString(R.string.country_dropdown_format, phFlag), false
+            getString(com.bitewise.app.R.string.country_dropdown_format, phFlag), false
         )
 
         binding.countryDropdown.setupCountryPicker(CountryList.COUNTRIES) {
@@ -77,20 +75,26 @@ class SearchFragment : Fragment(R.layout.fragment_search_screen) {
             binding.countryDropdown.showDropDown()
         }
 
-        lifecycleScope.launch {
-            viewModel.searchResults.collectLatest { results ->
-                adapter.setItems(results)
-                binding.txtSearchResults.text = "${results.size} results found"
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.searchState.collectLatest { state ->
+                when (state) {
+                    is UiState.Loading -> {
+                        // TODO: show loading indicator
+                    }
+                    is UiState.Success -> {
+                        val results = state.data
+                        adapter.setItems(results)
+                        binding.txtSearchResults.text = "${results.size} results found"
+                    }
+                    is UiState.Error -> {
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
 
     private fun filterResultsByCountry(countryName: String) {
         // TODO: implement filtering logic
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

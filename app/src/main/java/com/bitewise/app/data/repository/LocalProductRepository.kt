@@ -3,21 +3,22 @@ package com.bitewise.app.data.repository
 import android.util.Log
 import com.bitewise.app.data.local.ProductDAO
 import com.bitewise.app.data.mapper.toDomain
-import com.bitewise.app.domain.Product
+import com.bitewise.app.domain.models.Product
+import com.bitewise.app.domain.ProductRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class LocalProductRepository(
     private val dao: ProductDAO,
-    //using Dispatchers.IO since this is a (offline) network output task
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
+) : ProductRepository {
 
     companion object {
         private const val REPO_TAG = "🐓REPO-DATABASE"
     }
-    suspend fun searchProducts(query: String): List<Product> {
+
+    override suspend fun searchProducts(query: String): List<Product> {
         return withContext(defaultDispatcher) {
             Log.d(REPO_TAG, "Querying: $query in local DB")
             val results = dao.searchProducts(query)
@@ -27,7 +28,7 @@ class LocalProductRepository(
         }
     }
 
-    suspend fun getProductByBarcode(barcode: String): Product? {
+    override suspend fun getProductByBarcode(barcode: String): Product? {
         return withContext(defaultDispatcher) {
             Log.d(REPO_TAG, "Fetching item with barcode $barcode in local DB")
             val result = dao.searchByBarcode(barcode)
@@ -41,7 +42,7 @@ class LocalProductRepository(
         }
     }
 
-    suspend fun getAllProducts(): List<Product> {
+    override suspend fun getAllProducts(): List<Product> {
         return withContext(defaultDispatcher) {
             val results = dao.fetchSearchProductItems()
             Log.d(REPO_TAG, "Fetched ${results.size} items")
@@ -49,6 +50,4 @@ class LocalProductRepository(
             results.map { it.toDomain() }
         }
     }
-
-    //TODO("Create another function for category search")
 }

@@ -1,12 +1,13 @@
-package com.bitewise.app.ui.item.adapter.rows.containers
+package com.bitewise.app.ui.product.adapter.rows.containers
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerSecondBinding
-import com.bitewise.app.ui.search.util.ScoreMapper
+import com.bitewise.app.ui.common.grade.GradeManager
+import com.bitewise.app.ui.common.grade.GradeTypes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
-import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
+import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
 
 class SecondContainerViewHolder(
     private val binding: ProductContainerSecondBinding
@@ -20,11 +21,11 @@ class SecondContainerViewHolder(
         val context = binding.root.context
         val nutritionGrade = product.productScores?.nutritionGrade
 
-        binding.ivNutriScore.setImageResource(ScoreMapper.getNutriDrawable(nutritionGrade))
+        binding.ivNutriScore.setImageResource(GradeManager.getNutriDrawable(nutritionGrade))
 
-        val colorRes = GradeTypes.NUTRI_SCORE.getColor(nutritionGrade)
+        val colorRes = GradeManager.getColor(GradeTypes.NUTRI_SCORE, nutritionGrade)
         val colorInt = getColor(context, colorRes)
-        val description = GradeTypes.NUTRI_SCORE.getComment(nutritionGrade, context.resources)
+        val description = GradeManager.getComment(GradeTypes.NUTRI_SCORE, nutritionGrade, context.resources)
 
         binding.tvNutriGrade.text = nutritionGrade?.uppercase()
         binding.tvNutriGrade.setTextColor(getColor(context, colorRes))

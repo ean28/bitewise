@@ -1,6 +1,6 @@
-package com.bitewise.app.ui.item.adapter.rows
+package com.bitewise.app.ui.product.adapter.rows
 
-import com.bitewise.app.domain.Product
+import com.bitewise.app.domain.models.Product
 
 sealed class ProductRowManager {
     data class Header(val product: Product) : ProductRowManager()

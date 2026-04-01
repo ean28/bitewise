@@ -1,8 +1,8 @@
 package com.bitewise.app.data.mapper
 
 import com.bitewise.app.data.local.entities.ProductEntity
-import com.bitewise.app.domain.Product
-import com.bitewise.app.domain.Scores
+import com.bitewise.app.domain.models.Product
+import com.bitewise.app.domain.models.Scores
 
 fun ProductEntity.toDomain(): Product = Product(
     code = this.code,

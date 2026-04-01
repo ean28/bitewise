@@ -1,10 +1,11 @@
-package com.bitewise.app.ui.item.adapter
+package com.bitewise.app.ui.product.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ItemTableRowBinding
-import com.bitewise.app.ui.item.adapter.helpers.TableLayoutHelper
+import com.bitewise.app.ui.common.util.TableLayoutHelper
 
 class ProductNutritionTableAdapter(
     private var data: List<List<String>> = emptyList(),
@@ -28,6 +29,7 @@ class ProductNutritionTableAdapter(
 
     override fun getItemCount(): Int = data.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newData: List<List<String>>, calculatedWidth: Int) {
         this.data = newData
         this.firstColumnWidth = calculatedWidth

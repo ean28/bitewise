@@ -1,12 +1,13 @@
-package com.bitewise.app.ui.item.adapter.rows.containers
+package com.bitewise.app.ui.product.adapter.rows.containers
 
 import android.view.View
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerThirdBinding
-import com.bitewise.app.ui.item.adapter.rows.ProductRowManager
-import com.bitewise.app.ui.search.util.ScoreMapper
+import com.bitewise.app.ui.common.grade.GradeManager
+import com.bitewise.app.ui.common.grade.GradeTypes
+import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
 
 class ThirdContainerViewHolder(
     private val binding: ProductContainerThirdBinding
@@ -21,11 +22,11 @@ class ThirdContainerViewHolder(
         val novaGroup = product.productScores?.novaGroup
 
         binding.ivScore.setImageResource(
-            ScoreMapper.getNovaDrawable(novaGroup))
+            GradeManager.getNovaDrawable(novaGroup))
 
-        val colorRes = GradeTypes.NOVA_SCORE.getColor(novaGroup)
+        val colorRes = GradeManager.getColor(GradeTypes.NOVA_SCORE, novaGroup)
         val colorInt = getColor(context, colorRes)
-        val description = GradeTypes.NOVA_SCORE.getComment(novaGroup, context.resources)
+        val description = GradeManager.getComment(GradeTypes.NOVA_SCORE, novaGroup, context.resources)
 
         binding.txtGrade.text = novaGroup.toString()
         binding.txtGrade.setTextColor(getColor(context, colorRes))

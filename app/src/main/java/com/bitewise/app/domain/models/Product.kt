@@ -1,4 +1,4 @@
-package com.bitewise.app.domain
+package com.bitewise.app.domain.models
 
 data class Product(
     val code: String,
