@@ -1,17 +1,17 @@
 package com.bitewise.app.data.mapper
 
-import com.bitewise.app.domain.models.Nutrients
+import com.bitewise.app.domain.models.Nutrient
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
 
-object NutrientsMapper {
+object NutrientsProcessor {
 
-    fun mapJsonToNutrientList(nutrimentsMap: Map<String, JsonElement>?): List<Nutrients> {
+    fun process(nutrimentsMap: Map<String, JsonElement>?): List<Nutrient> {
         if (nutrimentsMap == null) return emptyList()
 
         val excludeKeywords = listOf("nova", "score", "estimate", "computed", "modifier", "label")
-        val nutrientList = mutableListOf<Nutrients>()
+        val nutrientList = mutableListOf<Nutrient>()
 
         // We check for both 'energy-kj' and the generic 'energy' key which often holds the kJ value
         val energyKj = (nutrimentsMap["energy-kj_100g"] ?: nutrimentsMap["energy_100g"])
@@ -24,7 +24,7 @@ object NutrientsMapper {
         // Only add Energy if at least one of them is actually found (not null)
         if (energyKj != null || energyKcal != null) {
             nutrientList.add(
-                Nutrients(
+                Nutrient(
                     name = "Energy",
                     amount = energyKj ?: 0f,
                     // Use "---" or "0" only if the specific kcal is missing
@@ -51,7 +51,7 @@ object NutrientsMapper {
 
                 val unit = nutrimentsMap["${baseKey}_unit"]?.jsonPrimitive?.contentOrNull ?: "g"
 
-                Nutrients(name = cleanName, amount = amount, unit = unit)
+                Nutrient(name = cleanName, amount = amount, unit = unit)
             }
             .sortedByDescending { it.amount }
             .toList()
