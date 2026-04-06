@@ -10,11 +10,13 @@ fun ProductEntity.toDomain(): Product = Product(
     imageUrl = this.imageFrontUrl,
     productScores = Scores(
         nutritionGrade = nutriscoreGrade,
-        ecoScoreGrade = null,
+        ecoScoreGrade = ecoScoreGrade,
         novaGroup = novaGroup
     ),
     allergenTags = this.allergenTags,
-    productNutriments = NutrientsMapper.mapJsonToNutrientList(this.nutriments)
+    productNutriments = NutrientsProcessor.process(this.nutriments),
+    productIngredients = IngredientsProcessor.process(this.ingredientsText),
+    labels = this.labels
 )
 //TODO("Refactor based on changes in product domain")
 
@@ -25,8 +27,11 @@ fun Product.toEntity(): ProductEntity = ProductEntity(
     imageFrontUrl = imageUrl,
     nutriscoreGrade = productScores?.nutritionGrade,
     novaGroup = productScores?.novaGroup,
+    ecoScoreGrade = productScores?.ecoScoreGrade,
     categoriesTags = null,
     searchText = null,
     allergenTags = allergenTags,
-    nutriments = null
+    nutriments = null,
+    ingredientsText = null,
+    labels = this.labels
 )

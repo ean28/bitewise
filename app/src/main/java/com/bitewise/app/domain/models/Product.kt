@@ -5,8 +5,10 @@ data class Product(
     val name: String,
     val imageUrl: String?,
 
-    val productNutriments: List<Nutrients>?,
+    val productNutriments: List<Nutrient>?,
     val productScores: Scores?,
     val allergenTags: String?,
+    val productIngredients: List<Ingredient>, // maybe list
+    val labels: String?
 
 )

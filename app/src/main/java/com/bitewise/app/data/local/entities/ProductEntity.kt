@@ -40,7 +40,16 @@ data class ProductEntity(
     val allergenTags: String?,
 
     @ColumnInfo(name = "nutriments_json")
-    val nutriments: Map<String, JsonElement>?
+    val nutriments: Map<String, JsonElement>?,
+
+    @ColumnInfo(name = "ecoscore_grade")
+    val ecoScoreGrade: String?,
+
+    @ColumnInfo(name = "ingredients_text")
+    val ingredientsText: String?,
+
+    @ColumnInfo(name = "labels")
+    val labels: String?
 
     //TODO("encapsulate entity fields based on relation. e.g. ProductScoresEntity, NutritionEntity, etc...")
 )
