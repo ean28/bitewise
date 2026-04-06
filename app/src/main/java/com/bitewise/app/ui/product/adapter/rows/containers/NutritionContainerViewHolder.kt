@@ -62,5 +62,18 @@ class NutritionContainerViewHolder(
             val targetRotation = if (isCurrentlyVisible) 0f else 90f
             binding.ivArrow.animate().rotation(targetRotation).setDuration(200).start()
         }
+
+        // Ingredients
+        val ingredients = row.product.productIngredients
+        if (ingredients.isEmpty()) {
+            binding.tvIngredients.text = "Ingredients not available"
+        } else {
+            val ingredientText = ingredients.joinToString("\n") { ingredient ->
+                val subs = if (ingredient.subIngredients.isNotEmpty())
+                    " (${ingredient.subIngredients.joinToString(", ")})" else ""
+                if (ingredient.isRisky) "⚠ ${ingredient.name}$subs" else "${ingredient.name}$subs"
+            }
+            binding.tvIngredients.text = ingredientText
+        }
     }
 }

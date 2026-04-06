@@ -17,6 +17,7 @@
             android:layout_height="match_parent"
             android:layout_marginStart="15dp"
             app:hintEnabled="false"
+            app:endIconMode="none"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -25,9 +26,12 @@
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="🇵🇭 ▼"
                 android:cursorVisible="false"
                 android:textSize="11sp" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout

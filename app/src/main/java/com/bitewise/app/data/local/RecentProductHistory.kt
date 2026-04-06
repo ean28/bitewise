@@ -1,6 +1,7 @@
 package com.bitewise.app.data.local
 
 import android.content.Context
+import androidx.core.content.edit
 
 class RecentProductHistory(context: Context) {
     private val prefs = context.getSharedPreferences("recent_products_prefs", Context.MODE_PRIVATE)
@@ -11,7 +12,7 @@ class RecentProductHistory(context: Context) {
         current.add(0, barcode)
         
         val limited = current.take(10)
-        prefs.edit().putString("recent_barcodes", limited.joinToString(",")).apply()
+        prefs.edit { putString("recent_barcodes", limited.joinToString(",")) }
     }
 
     fun getBarcodes(): List<String> {
