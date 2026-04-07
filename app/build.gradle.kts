@@ -33,6 +33,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            buildConfigField("boolean", "SKIP_ONBOARDING", "false")
+        }
     }
 
     androidResources {
