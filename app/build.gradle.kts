@@ -53,6 +53,16 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        unitTests.all {
+            it.testLogging {
+                events("passed", "skipped", "failed", "standardOut", "standardError")
+                showStandardStreams = true
+                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            }
+        }
+    }
 }
 
 dependencies {
@@ -79,12 +89,15 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
     ksp(libs.androidx.room.compiler)
     
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
