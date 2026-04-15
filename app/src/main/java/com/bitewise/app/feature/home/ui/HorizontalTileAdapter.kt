@@ -1,11 +1,11 @@
-package com.bitewise.app.ui.home.adapters
+package com.bitewise.app.feature.home.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bitewise.app.core.ui.loadImage
 import com.bitewise.app.databinding.HomeItemTileHorizontalBinding
-import com.bitewise.app.domain.models.Product
-import com.bitewise.app.ui.common.util.loadImage
+import com.bitewise.app.feature.product.api.Product
 
 class HorizontalTileAdapter(
     private val onClick: ((Product) -> Unit)? = null
