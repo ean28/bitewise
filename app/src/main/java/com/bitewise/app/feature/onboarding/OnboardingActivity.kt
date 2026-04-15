@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.onboarding
+package com.bitewise.app.feature.onboarding
 
 import android.content.Context
 import android.os.Bundle
@@ -31,17 +31,17 @@ class OnboardingActivity : AppCompatActivity() {
         private const val KEY_DONE = "onboarding_done"
 
         fun onboardingAlreadyDone(context: Context): Boolean {
-            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             return prefs.getBoolean(KEY_DONE, false)
         }
 
         fun setOnboardingDone(context: Context) {
-            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             prefs.edit { putBoolean(KEY_DONE, true) }
         }
 
         fun resetOnboarding(context: Context) {
-            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             prefs.edit { putBoolean(KEY_DONE, false) }
         }
     }
