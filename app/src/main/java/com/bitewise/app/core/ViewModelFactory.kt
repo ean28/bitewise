@@ -34,7 +34,12 @@ class ViewModelFactory(
                 SearchViewModel(productRepository) as T
             }
             modelClass.isAssignableFrom(ProductDetailViewModel::class.java) -> {
-                ProductDetailViewModel(productRepository, recentProductRepository!!) as T
+                ProductDetailViewModel(
+                    productRepository,
+                    recentProductRepository!!,
+                    aiRepository!!
+
+                ) as T
             }
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
                 HomeViewModel(

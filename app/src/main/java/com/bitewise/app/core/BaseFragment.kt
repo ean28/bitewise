@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.common
+package com.bitewise.app.core
 
 import android.os.Bundle
 import android.view.LayoutInflater

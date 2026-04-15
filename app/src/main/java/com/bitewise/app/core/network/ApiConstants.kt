@@ -1,4 +1,4 @@
-package com.bitewise.app.data.api.constants
+package com.bitewise.app.core.network
 
 object ApiConstants {
     private val RAW_SEARCH_FIELDS =

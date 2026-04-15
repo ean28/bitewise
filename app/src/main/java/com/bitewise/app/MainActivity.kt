@@ -7,9 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.bitewise.app.ui.onboarding.OnboardingActivity
+import com.bitewise.app.feature.onboarding.OnboardingActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -17,18 +19,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        // --- DEVELOPMENT HELPERS ---
-        // To RESET onboarding (force it to show):
-        // 1. Uncomment the line below.
-        // 2. Run the app once.
-        // 3. Comment the line back out to stop the loop.
-
-//         OnboardingActivity.resetOnboarding(this)
-
-        // To SKIP onboarding (mark as done instantly):
-        // OnboardingActivity.setOnboardingDone(this)
-        // ---------------------------
 
         if (!OnboardingActivity.onboardingAlreadyDone(this)) {
             startActivity(Intent(this, OnboardingActivity::class.java))
@@ -61,5 +51,21 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         
         bottomNav.setupWithNavController(navController)
+        setupBottomNavBehavior(bottomNav, navController)
+    }
+
+    /**
+     * Ensures that clicking Home in the bottom nav always returns to the 
+     * root of the Home graph, clearing any deep-linked fragments.
+     */
+    private fun setupBottomNavBehavior(bottomNav: BottomNavigationView, navController: NavController) {
+        bottomNav.setOnItemSelectedListener { item ->
+            val builder = NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setPopUpTo(navController.graph.startDestinationId, false)
+            
+            navController.navigate(item.itemId, null, builder.build())
+            true
+        }
     }
 }

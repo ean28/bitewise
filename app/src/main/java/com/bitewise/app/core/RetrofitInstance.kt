@@ -1,6 +1,7 @@
-package com.bitewise.app.data.api
+package com.bitewise.app.core
 
 import com.bitewise.app.BuildConfig
+import com.bitewise.app.feature.product.data.OpenFoodFactsApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -14,12 +15,9 @@ object RetrofitInstance {
         ignoreUnknownKeys = true
         coerceInputValues = true
     }
+    
     private val logging = HttpLoggingInterceptor().apply {
-        level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.BODY
-        } else {
-            HttpLoggingInterceptor.Level.NONE
-        }
+        level = HttpLoggingInterceptor.Level.BODY
     }
 
     private val client = OkHttpClient.Builder()
@@ -28,12 +26,15 @@ object RetrofitInstance {
 
     private val contentType = "application/json".toMediaType()
 
-    val api: OpenFoodFactsApi by lazy {
+    private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
-            .create(OpenFoodFactsApi::class.java)
+    }
+
+    val api: OpenFoodFactsApi by lazy {
+        retrofit.create(OpenFoodFactsApi::class.java)
     }
 }
