@@ -4,12 +4,6 @@
     <!-- Search Fragment-->
     <string name="country_dropdown_format">%1$s \u25BC</string>
 
-    <string name="no_results">No results found</string>
-    <plurals name="search_results_count">
-        <item quantity="one">%d result found</item>
-        <item quantity="other">%d results found</item>
-    </plurals>
-
     <string name="learn_more_clickable"><u>Learn More...</u></string>
 
     <!-- DESCRIPTION -->
@@ -34,7 +28,6 @@
         <item>Moderate environmental impact</item>          <!-- C -->
         <item>High environmental impact</item>              <!-- D -->
     </string-array>
-
     <string-array name="nova_grade_comments">
         <item>Unknown processing level</item>               <!-- None -->
         <item>Unprocessed/minimally processed foods</item>  <!-- 1 -->
