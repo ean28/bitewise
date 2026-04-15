@@ -1,13 +1,13 @@
-package com.bitewise.app.ui.product.adapter.rows.containers
+package com.bitewise.app.feature.product.ui.adapter.rows.containers
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.databinding.ProductContainerSecondBinding
-import com.bitewise.app.ui.common.grade.GradeManager
-import com.bitewise.app.ui.common.grade.GradeTypes
+import com.bitewise.app.core.ui.GradeManager
+import com.bitewise.app.core.ui.GradeTypes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
-import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
+import com.bitewise.app.feature.product.ui.adapter.rows.ProductRowManager
 
 class SecondContainerViewHolder(
     private val binding: ProductContainerSecondBinding

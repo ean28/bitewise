@@ -1,34 +1,34 @@
-package com.bitewise.app.ui.product.adapter.rows.containers
+package com.bitewise.app.feature.product.ui.adapter.rows.containers
 
 import android.view.View
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.bitewise.app.databinding.ProductContainerFourthBinding
-import com.bitewise.app.ui.common.grade.GradeManager
-import com.bitewise.app.ui.common.grade.GradeTypes
-import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
+import com.bitewise.app.databinding.ProductContainerThirdBinding
+import com.bitewise.app.core.ui.GradeManager
+import com.bitewise.app.core.ui.GradeTypes
+import com.bitewise.app.feature.product.ui.adapter.rows.ProductRowManager
 
-class FourthContainerViewHolder(
-    private val binding: ProductContainerFourthBinding
+class ThirdContainerViewHolder(
+    private val binding: ProductContainerThirdBinding
 ): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(
-        row: ProductRowManager.FourthContainer,
-        onClick: ((ProductRowManager.FourthContainer) -> Unit)? = null
+        row: ProductRowManager.ThirdContainer,
+        onClick: ((ProductRowManager.ThirdContainer) -> Unit)? = null
     ) {
         val product = row.product
         val context = binding.root.context
-        val ecoScore = product.productScores?.ecoScoreGrade ?: "None"
+        val novaGroup = product.productScores?.novaGroup
 
         binding.ivScore.setImageResource(
-            GradeManager.getEcoDrawable(ecoScore))
+            GradeManager.getNovaDrawable(novaGroup))
 
-        val colorRes = GradeManager.getColor(GradeTypes.ECO_SCORE, ecoScore)
+        val colorRes = GradeManager.getColor(GradeTypes.NOVA_SCORE, novaGroup)
         val colorInt = getColor(context, colorRes)
-        val description = GradeManager.getComment(GradeTypes.ECO_SCORE, ecoScore, context.resources)
+        val description = GradeManager.getComment(GradeTypes.NOVA_SCORE, novaGroup, context.resources)
 
-        binding.txtGrade.text = ecoScore
+        binding.txtGrade.text = novaGroup.toString()
         binding.txtGrade.setTextColor(getColor(context, colorRes))
         binding.txtDescription.text = description
         binding.txtDescription.setTextColor(colorInt)

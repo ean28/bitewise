@@ -1,14 +1,16 @@
-package com.bitewise.app.ui.product.adapter.rows.containers
+package com.bitewise.app.feature.product.ui.adapter.rows.containers
+import com.bitewise.app.feature.product.api.Nutrient
+
 
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bitewise.app.R
 import com.bitewise.app.databinding.ProductContainerNutritionBinding
-import com.bitewise.app.ui.common.util.TableLayoutHelper
-import com.bitewise.app.ui.product.adapter.ProductNutritionTableAdapter
-import com.bitewise.app.ui.product.adapter.helpers.DefaultNutritionTable
-import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
+import com.bitewise.app.core.ui.TableLayoutHelper
+import com.bitewise.app.feature.product.ui.adapter.ProductNutritionTableAdapter
+import com.bitewise.app.feature.product.ui.adapter.helpers.DefaultNutritionTable
+import com.bitewise.app.feature.product.ui.adapter.rows.ProductRowManager
 
 class NutritionContainerViewHolder(
     private val binding: ProductContainerNutritionBinding
@@ -50,10 +52,8 @@ class NutritionContainerViewHolder(
         )
 
         binding.tableRecyclerView.layoutManager = LinearLayoutManager(context)
-        val adapter = ProductNutritionTableAdapter()
+        val adapter = ProductNutritionTableAdapter(nutrientsList)
         binding.tableRecyclerView.adapter = adapter
-
-        adapter.updateData(dataRows, maxWidth)
 
         binding.txtSummaryContainer.setOnClickListener {
             val isCurrentlyVisible = binding.nutriContainer.isVisible
