@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.kotlin.serialization)
-//    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.secrets)
 }
 
 android {
@@ -94,6 +94,8 @@ dependencies {
     
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
+
+    implementation(libs.generativeai)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
