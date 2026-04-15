@@ -7,7 +7,7 @@
     <!-- Step 1 -->
     <fragment
         android:id="@+id/onboarding1Fragment"
-        android:name="com.bitewise.app.ui.onboarding.basefragment.physical.Onboarding1Fragment"
+        android:name="com.bitewise.app.feature.onboarding.ui.physical.Onboarding1Fragment"
         android:label="Physical Stats">
         <action
             android:id="@+id/action_onboarding1_to_onboarding2"
@@ -17,7 +17,7 @@
     <!-- Step 2 -->
     <fragment
         android:id="@+id/onboarding2Fragment"
-        android:name="com.bitewise.app.ui.onboarding.basefragment.lifestyle.Onboarding2Fragment"
+        android:name="com.bitewise.app.feature.onboarding.ui.lifestyle.Onboarding2Fragment"
         android:label="Lifestyle">
         <action
             android:id="@+id/action_onboarding2_to_onboarding3"
@@ -27,7 +27,7 @@
     <!-- Step 3 -->
     <fragment
         android:id="@+id/onboarding3Fragment"
-        android:name="com.bitewise.app.ui.onboarding.basefragment.health.Onboarding3Fragment"
+        android:name="com.bitewise.app.feature.onboarding.ui.health.Onboarding3Fragment"
         android:label="Health">
     </fragment>
 </navigation>
