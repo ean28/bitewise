@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.product
+package com.bitewise.app.feature.product.ui
 
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +9,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.databinding.FragmentProductInformationBinding
-import com.bitewise.app.ui.common.BaseFragment
-import com.bitewise.app.ui.common.UiState
-import com.bitewise.app.ui.common.ViewModelFactory
-import com.bitewise.app.ui.product.adapter.ProductInformationAdapter
-import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
+import com.bitewise.app.core.BaseFragment
+import com.bitewise.app.core.UiState
+import com.bitewise.app.core.ViewModelFactory
+import com.bitewise.app.feature.product.ui.adapter.ProductInformationAdapter
+import com.bitewise.app.feature.product.ui.adapter.rows.ProductRowManager
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -33,7 +33,14 @@ class ProductDetailFragment : BaseFragment<FragmentProductInformationBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         val app = (requireActivity().application as BiteWiseApplication)
-        val factory = ViewModelFactory(app.productRepository, app.recentHistory)
+        val factory = ViewModelFactory(
+            application = app,
+            productRepository = app.productRepository,
+            userRepository = app.userRepository,
+            healthScoringEngine = app.healthScoringEngine,
+            aiRepository = app.aiRepository,
+            recentProductRepository = app.recentProductRepository
+        )
         viewModel = ViewModelProvider(this, factory)[ProductDetailViewModel::class.java]
 
         binding.recyclerProductInformation.layoutManager =
@@ -50,10 +57,10 @@ class ProductDetailFragment : BaseFragment<FragmentProductInformationBinding>(
                         // TODO: show loading
                     }
                     is UiState.Success -> {
-                        val product = state.data
+                        val (product, analysis) = state.data
                         val rows: List<ProductRowManager> = listOf(
-                            ProductRowManager.Header(product),
-                            ProductRowManager.FirstContainer(product),
+                            ProductRowManager.Header(product, analysis),
+                            ProductRowManager.FirstContainer(product, analysis),
                             ProductRowManager.SecondContainer(product),
                             ProductRowManager.ThirdContainer(product),
                             ProductRowManager.FourthContainer(product),

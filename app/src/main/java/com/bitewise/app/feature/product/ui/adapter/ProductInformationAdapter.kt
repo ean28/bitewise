@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.product.adapter
+package com.bitewise.app.feature.product.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,13 +9,13 @@ import com.bitewise.app.databinding.ProductContainerNutritionBinding
 import com.bitewise.app.databinding.ProductContainerSecondBinding
 import com.bitewise.app.databinding.ProductContainerThirdBinding
 import com.bitewise.app.databinding.ProductContainerFourthBinding
-import com.bitewise.app.ui.product.adapter.rows.ProductRowManager
-import com.bitewise.app.ui.product.adapter.rows.containers.FirstContainerViewHolder
-import com.bitewise.app.ui.product.adapter.rows.containers.FourthContainerViewHolder
-import com.bitewise.app.ui.product.adapter.rows.containers.HeaderViewHolder
-import com.bitewise.app.ui.product.adapter.rows.containers.NutritionContainerViewHolder
-import com.bitewise.app.ui.product.adapter.rows.containers.SecondContainerViewHolder
-import com.bitewise.app.ui.product.adapter.rows.containers.ThirdContainerViewHolder
+import com.bitewise.app.feature.product.ui.adapter.rows.ProductRowManager
+import com.bitewise.app.feature.product.ui.adapter.rows.containers.FirstContainerViewHolder
+import com.bitewise.app.feature.product.ui.adapter.rows.containers.FourthContainerViewHolder
+import com.bitewise.app.feature.product.ui.adapter.rows.containers.HeaderViewHolder
+import com.bitewise.app.feature.product.ui.adapter.rows.containers.NutritionContainerViewHolder
+import com.bitewise.app.feature.product.ui.adapter.rows.containers.SecondContainerViewHolder
+import com.bitewise.app.feature.product.ui.adapter.rows.containers.ThirdContainerViewHolder
 
 class ProductInformationAdapter(
     private val rows: List<ProductRowManager>,
@@ -88,8 +88,11 @@ class ProductInformationAdapter(
         }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (val row = rows[position]) {
-            is ProductRowManager.Header -> (holder as HeaderViewHolder).bind(row.product)
+        when (val row: ProductRowManager = rows[position]) {
+            is ProductRowManager.Header -> (holder as HeaderViewHolder).bind(
+                row.product,
+                analysis = row.analysis
+            )
             is ProductRowManager.FirstContainer -> (holder as FirstContainerViewHolder).bind(row, onContainerClick)
             is ProductRowManager.SecondContainer -> (holder as SecondContainerViewHolder).bind(row, onContainerClick)
             is ProductRowManager.ThirdContainer -> (holder as ThirdContainerViewHolder).bind(row, onContainerClick)

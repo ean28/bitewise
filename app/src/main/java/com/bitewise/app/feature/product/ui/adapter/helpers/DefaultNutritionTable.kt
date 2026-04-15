@@ -1,6 +1,6 @@
-package com.bitewise.app.ui.product.adapter.helpers
+package com.bitewise.app.feature.product.ui.adapter.helpers
 
-import com.bitewise.app.domain.models.Nutrient
+import com.bitewise.app.feature.product.api.Nutrient
 
 object DefaultNutritionTable {
 
