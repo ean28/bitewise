@@ -1,12 +1,12 @@
-package com.bitewise.app.ui.search.adapter
+package com.bitewise.app.feature.search.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bitewise.app.domain.models.Product
+import com.bitewise.app.feature.product.api.Product
 import com.bitewise.app.databinding.ItemTileSearchItemsBinding
-import com.bitewise.app.ui.common.grade.GradeManager
-import com.bitewise.app.ui.common.util.loadImage
+import com.bitewise.app.core.ui.GradeManager
+import com.bitewise.app.core.ui.loadImage
 
 class SearchTileAdapter(
     private val onClick: ((Product) -> Unit)? = null

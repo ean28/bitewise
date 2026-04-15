@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.search
+package com.bitewise.app.feature.search
 
 import android.os.Bundle
 import android.view.View
@@ -10,12 +10,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.databinding.FragmentSearchScreenBinding
-import com.bitewise.app.ui.common.BaseFragment
-import com.bitewise.app.ui.common.UiState
-import com.bitewise.app.ui.common.ViewModelFactory
-import com.bitewise.app.ui.search.adapter.SearchTileAdapter
-import com.bitewise.app.ui.search.utils.CountryList
-import com.bitewise.app.ui.search.utils.setupCountryPicker
+import com.bitewise.app.core.BaseFragment
+import com.bitewise.app.core.UiState
+import com.bitewise.app.core.ViewModelFactory
+import com.bitewise.app.feature.search.ui.SearchTileAdapter
+import com.bitewise.app.feature.search.ui.CountryList
+import com.bitewise.app.feature.search.ui.setupCountryPicker
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -30,7 +30,10 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         val app = (requireActivity().application as BiteWiseApplication)
-        val factory = ViewModelFactory(app.productRepository, app.recentHistory)
+        val factory = ViewModelFactory(
+            application = app,
+            productRepository = app.productRepository
+        )
         viewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
 
         adapter = SearchTileAdapter { selectedProduct ->

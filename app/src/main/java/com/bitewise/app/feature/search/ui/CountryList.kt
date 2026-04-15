@@ -1,7 +1,6 @@
-package com.bitewise.app.ui.search.utils
+package com.bitewise.app.feature.search.ui
 
-import com.bitewise.app.ui.search.models.Country
-
+import com.bitewise.app.feature.search.domain.Country
 object CountryList {
     val COUNTRIES: List<Country> =
         listOf(

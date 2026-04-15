@@ -1,10 +1,9 @@
-package com.bitewise.app.ui.search.utils
+package com.bitewise.app.feature.search.ui
 
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import com.bitewise.app.R
-import com.bitewise.app.ui.search.models.Country
-
+import com.bitewise.app.feature.search.domain.Country
 fun AutoCompleteTextView.setupCountryPicker(
     countries: List<Country>,
     onSelect: (Country) -> Unit

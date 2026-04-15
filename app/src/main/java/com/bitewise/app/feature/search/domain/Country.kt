@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.search.models
+package com.bitewise.app.feature.search.domain
 
 data class Country (
     val name: String,

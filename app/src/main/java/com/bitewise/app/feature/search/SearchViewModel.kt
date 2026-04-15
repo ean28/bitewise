@@ -1,10 +1,10 @@
-package com.bitewise.app.ui.search
+package com.bitewise.app.feature.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bitewise.app.domain.models.Product
-import com.bitewise.app.domain.ProductRepository
-import com.bitewise.app.ui.common.UiState
+import com.bitewise.app.feature.product.api.Product
+import com.bitewise.app.feature.product.api.ProductRepository
+import com.bitewise.app.core.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
