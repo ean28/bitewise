@@ -1,4 +1,4 @@
-package com.bitewise.app.ui.common.util
+package com.bitewise.app.core.ui
 
 import android.widget.ImageView
 import coil3.load
