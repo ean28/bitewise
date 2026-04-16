@@ -63,7 +63,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🔧 Sync Debugger"
+                android:text="Sync Debugger"
                 android:fontFamily="@font/inter_bold"
                 android:textColor="#C62828"
                 android:textSize="14sp" />

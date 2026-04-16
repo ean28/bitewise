@@ -13,6 +13,7 @@ import com.bitewise.app.core.ViewModelFactory
 import com.bitewise.app.databinding.Onboarding3Binding
 import com.bitewise.app.domain.user.models.UserConstants
 import com.bitewise.app.feature.onboarding.OnboardingViewModel
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
@@ -34,6 +35,7 @@ class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
 
         setupSearchAndChip(
             binding.multiAllergies,
+            binding.btnAddAllergy,
             binding.chipGroupAllergies,
             UserConstants.ALLERGIES,
             viewModel.data.allergies.toMutableList()
@@ -41,6 +43,7 @@ class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
 
         setupSearchAndChip(
             binding.multiDiet,
+            binding.btnAddDiet,
             binding.chipGroupDiet,
             UserConstants.DIET_TYPES,
             viewModel.data.dietaryPreferences.toMutableList()
@@ -48,6 +51,7 @@ class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
 
         setupSearchAndChip(
             binding.multiConditions,
+            binding.btnAddCondition,
             binding.chipGroupConditions,
             UserConstants.MEDICAL_CONDITIONS,
             viewModel.data.medicalConditions.toMutableList()
@@ -64,11 +68,9 @@ class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
         }
     }
 
-    /**
-     * Sets up a search-based MultiAutoCompleteTextView that converts selections into Chips.
-     */
     private fun setupSearchAndChip(
         textView: MultiAutoCompleteTextView,
+        addButton: MaterialButton,
         chipGroup: ChipGroup,
         suggestions: List<String>,
         selectedList: MutableList<String>,
@@ -77,26 +79,31 @@ class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, suggestions)
         textView.setAdapter(adapter)
         textView.setTokenizer(MultiAutoCompleteTextView.CommaTokenizer())
-        
-        // Show dropdown immediately on focus/type
         textView.threshold = 1 
 
-        textView.setOnItemClickListener { _, _, _, _ ->
-            // Extract the last typed item from the comma-separated string
+        val addItem = {
             val fullText = textView.text.toString()
-            val parts = fullText.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-            val lastAdded = parts.lastOrNull() ?: ""
-
-            if (suggestions.contains(lastAdded) && !selectedList.contains(lastAdded)) {
-                selectedList.add(lastAdded)
-                addChipToGroup(chipGroup, lastAdded, selectedList, onUpdate)
+            val itemsToAdd = fullText.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+            
+            var changed = false
+            itemsToAdd.forEach { item ->
+                if (!selectedList.contains(item)) {
+                    selectedList.add(item)
+                    addChipToGroup(chipGroup, item, selectedList, onUpdate)
+                    changed = true
+                }
+            }
+            
+            if (changed) {
                 onUpdate(selectedList)
             }
-            // Clear the text field after selection to keep UI clean
             textView.setText("")
         }
 
-        // Initialize with existing data (e.g., OMNIVORE by default)
+        textView.setOnItemClickListener { _, _, _, _ -> addItem() }
+        addButton.setOnClickListener { addItem() }
+
+        // Initialize with existing data
         chipGroup.removeAllViews()
         selectedList.forEach { item ->
             addChipToGroup(chipGroup, item, selectedList, onUpdate)

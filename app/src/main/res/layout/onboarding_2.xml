@@ -107,7 +107,6 @@
         android:textSize="16sp"
         android:fontFamily="@font/inter_bold"
         android:textColor="@android:color/white"
-        app:backgroundTint="#66BB6A"
         app:cornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

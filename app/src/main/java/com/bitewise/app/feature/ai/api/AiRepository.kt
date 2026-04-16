@@ -17,7 +17,7 @@ interface AiRepository {
         summary: String,
         tags: List<String>,
         contextHash: Int,
-        productHash: String,
+        productHash: Int,
         isLocalOverride: Boolean = false,
         syncStatus: AiSyncStatus = AiSyncStatus.SYNCED,
         tokenCost: Int = 0

@@ -1,4 +1,4 @@
-package com.bitewise.app.data.local.di
+package com.bitewise.app.feature.product
 
 import android.content.Context
 import android.util.Log
@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.bitewise.app.data.local.LocalProductDatabase
-import com.bitewise.app.data.local.converter.NutrimentsConverter
+import com.bitewise.app.feature.product.data.LocalProductDatabase
+import com.bitewise.app.feature.product.data.local.NutrimentsConverter
 import java.util.concurrent.Executors
 
 object LocalProductDatabaseModule {
@@ -63,7 +63,6 @@ object LocalProductDatabaseModule {
                     context.applicationContext,
                     LocalProductDatabase::class.java,
                     "philippines_products.db"
-                    //"philippines_products_cleaned_FINAL.db"
                 )
                     .createFromAsset("databases/philippines_products.db")
                     .addMigrations(MIGRATION_1_2)

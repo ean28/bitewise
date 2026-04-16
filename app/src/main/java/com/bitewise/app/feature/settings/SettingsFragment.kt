@@ -17,6 +17,7 @@ import com.bitewise.app.core.ViewModelFactory
 import com.bitewise.app.databinding.FragmentSettingsBinding
 import com.bitewise.app.domain.user.models.UserConstants
 import com.bitewise.app.domain.user.models.UserContext
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.flow.collectLatest
@@ -68,18 +69,21 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
     private fun setupMultiSelects() {
         setupMultiSelectLogic(
             binding.multiDiet,
+            binding.btnAddDiet,
             binding.chipGroupDiet,
             UserConstants.DIET_TYPES,
             selectedDiets
         )
         setupMultiSelectLogic(
             binding.multiAllergies,
+            binding.btnAddAllergy,
             binding.chipGroupAllergies,
             UserConstants.ALLERGIES,
             selectedAllergies
         )
         setupMultiSelectLogic(
             binding.multiConditions,
+            binding.btnAddCondition,
             binding.chipGroupConditions,
             UserConstants.MEDICAL_CONDITIONS,
             selectedConditions
@@ -88,6 +92,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
 
     private fun setupMultiSelectLogic(
         textView: MultiAutoCompleteTextView,
+        addButton: MaterialButton,
         chipGroup: ChipGroup,
         suggestions: List<String>,
         selectedList: MutableList<String>
@@ -96,14 +101,26 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
         textView.setAdapter(adapter)
         textView.setTokenizer(MultiAutoCompleteTextView.CommaTokenizer())
 
-        textView.setOnItemClickListener { _, _, _, _ ->
-            val text = textView.text.toString().split(",").last { it.trim().isNotEmpty() }.trim()
-            if (suggestions.contains(text) && !selectedList.contains(text)) {
-                selectedList.add(text)
-                refreshChips(chipGroup, selectedList)
-                textView.setText("")
+        val addItem = {
+            val fullText = textView.text.toString()
+            val itemsToAdd = fullText.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+            
+            var changed = false
+            itemsToAdd.forEach { item ->
+                if (!selectedList.contains(item)) {
+                    selectedList.add(item)
+                    changed = true
+                }
             }
+            
+            if (changed) {
+                refreshChips(chipGroup, selectedList)
+            }
+            textView.setText("")
         }
+
+        textView.setOnItemClickListener { _, _, _, _ -> addItem() }
+        addButton.setOnClickListener { addItem() }
     }
 
     private fun refreshChips(chipGroup: ChipGroup, selectedList: MutableList<String>) {
@@ -112,6 +129,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
             val emptyChip = Chip(requireContext()).apply {
                 text = "None"
                 isEnabled = false
+                chipBackgroundColor = android.content.res.ColorStateList.valueOf(0x10000000)
             }
             chipGroup.addView(emptyChip)
             return
@@ -121,6 +139,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
             val chip = Chip(requireContext()).apply {
                 this.text = text
                 isCloseIconVisible = true
+                chipBackgroundColor = android.content.res.ColorStateList.valueOf(0xFFE8F5E9.toInt())
+                closeIconTint = android.content.res.ColorStateList.valueOf(0xFF66BB6A.toInt())
                 setOnCloseIconClickListener {
                     selectedList.remove(text)
                     refreshChips(chipGroup, selectedList)
@@ -184,7 +204,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
                         selectedConditions.addAll(it.conditions)
                         refreshChips(binding.chipGroupConditions, selectedConditions)
                         
-                        binding.txtDebugHash.text = "Context Hash: ${it.contextHash}"
+                        binding.txtDebugHash.text = "Context Hash: ${it.hashCode()}"
                         if (!it.isComplete()) {
                             binding.txtDebugHash.append("\n⚠️ PROFILE INCOMPLETE FOR AI SYNC")
                         }
