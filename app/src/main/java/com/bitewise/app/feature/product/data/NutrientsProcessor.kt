@@ -1,6 +1,6 @@
-package com.bitewise.app.data.mapper
+package com.bitewise.app.feature.product.data
 
-import com.bitewise.app.domain.models.Nutrient
+import com.bitewise.app.feature.product.api.Nutrient
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive

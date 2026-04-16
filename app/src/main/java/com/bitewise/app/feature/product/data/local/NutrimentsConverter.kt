@@ -1,4 +1,4 @@
-package com.bitewise.app.data.local.converter
+package com.bitewise.app.feature.product.data.local
 
 import androidx.room.TypeConverter
 import kotlinx.serialization.json.Json

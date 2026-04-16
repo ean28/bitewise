@@ -1,6 +1,7 @@
-package com.bitewise.app.data.mapper
+package com.bitewise.app.feature.product.data
 
-import com.bitewise.app.domain.models.Ingredient
+import com.bitewise.app.feature.product.api.Ingredient
+
 
 object IngredientsProcessor {
 

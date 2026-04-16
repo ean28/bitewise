@@ -1,10 +1,9 @@
-package com.bitewise.app.data.local.entities
+package com.bitewise.app.feature.product.data.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.bitewise.app.data.local.converter.NutrimentsConverter
 import kotlinx.serialization.json.JsonElement
 
 @Entity(tableName = "products")
@@ -50,6 +49,4 @@ data class ProductEntity(
 
     @ColumnInfo(name = "labels")
     val labels: String?
-
-    //TODO("encapsulate entity fields based on relation. e.g. ProductScoresEntity, NutritionEntity, etc...")
 )

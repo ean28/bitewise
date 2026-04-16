@@ -1,12 +1,13 @@
-package com.bitewise.app.data.local
+package com.bitewise.app.feature.product.data
 
 import android.content.Context
 import androidx.core.content.edit
+import com.bitewise.app.feature.product.api.RecentProductRepository
 
-class RecentProductHistory(context: Context) {
+class LocalRecentProductRepository(context: Context) : RecentProductRepository {
     private val prefs = context.getSharedPreferences("recent_products_prefs", Context.MODE_PRIVATE)
 
-    fun addBarcode(barcode: String) {
+    override fun addBarcode(barcode: String) {
         val current = getBarcodes().toMutableList()
         current.remove(barcode)
         current.add(0, barcode)
@@ -15,7 +16,7 @@ class RecentProductHistory(context: Context) {
         prefs.edit { putString("recent_barcodes", limited.joinToString(",")) }
     }
 
-    fun getBarcodes(): List<String> {
+    override fun getBarcodes(): List<String> {
         val saved = prefs.getString("recent_barcodes", "") ?: ""
         return if (saved.isEmpty()) emptyList() else saved.split(",")
     }

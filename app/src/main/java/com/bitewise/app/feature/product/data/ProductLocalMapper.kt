@@ -1,12 +1,13 @@
-package com.bitewise.app.data.mapper
+package com.bitewise.app.feature.product.data
 
-import com.bitewise.app.data.local.entities.ProductEntity
-import com.bitewise.app.domain.models.Product
-import com.bitewise.app.domain.models.Scores
+import com.bitewise.app.feature.product.data.local.ProductEntity
+import com.bitewise.app.feature.product.api.Product
+import com.bitewise.app.feature.product.api.Scores
 
 fun ProductEntity.toDomain(): Product = Product(
     code = this.code,
     name = this.productName ?: "Unknown",
+    brands = this.brands,
     imageUrl = this.imageFrontUrl,
     productScores = Scores(
         nutritionGrade = nutriscoreGrade,
@@ -15,15 +16,15 @@ fun ProductEntity.toDomain(): Product = Product(
     ),
     allergenTags = this.allergenTags,
     productNutriments = NutrientsProcessor.process(this.nutriments),
+    ingredientsText = this.ingredientsText,
     productIngredients = IngredientsProcessor.process(this.ingredientsText),
     labels = this.labels
 )
-//TODO("Refactor based on changes in product domain")
 
 fun Product.toEntity(): ProductEntity = ProductEntity(
     code = code,
     productName = name,
-    brands = null,
+    brands = brands,
     imageFrontUrl = imageUrl,
     nutriscoreGrade = productScores?.nutritionGrade,
     novaGroup = productScores?.novaGroup,
@@ -31,7 +32,7 @@ fun Product.toEntity(): ProductEntity = ProductEntity(
     categoriesTags = null,
     searchText = null,
     allergenTags = allergenTags,
-    nutriments = null,
-    ingredientsText = null,
-    labels = this.labels
+    nutriments = null, // Note: Mapping back from domain nutrients to JSON is complex and usually not needed for read-only assets
+    ingredientsText = ingredientsText,
+    labels = labels
 )

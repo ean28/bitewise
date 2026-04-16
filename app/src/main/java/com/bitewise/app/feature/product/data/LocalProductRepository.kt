@@ -1,15 +1,13 @@
-package com.bitewise.app.data.repository
+package com.bitewise.app.feature.product.data
 
 import android.util.Log
-import com.bitewise.app.data.local.ProductDAO
-import com.bitewise.app.data.mapper.toDomain
-import com.bitewise.app.domain.models.Product
-import com.bitewise.app.domain.ProductRepository
+import com.bitewise.app.feature.product.api.Product
+import com.bitewise.app.feature.product.api.ProductRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class LocalProductRepository(
+open class LocalProductRepository(
     private val dao: ProductDAO,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ProductRepository {
@@ -47,6 +45,15 @@ class LocalProductRepository(
             val results = dao.fetchSearchProductItems()
             Log.d(REPO_TAG, "Fetched ${results.size} items")
 
+            results.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun getScannableProducts(limit: Int, excludedBarcodes: List<String>): List<Product> {
+        return withContext(defaultDispatcher) {
+            val excluded = excludedBarcodes.ifEmpty { listOf("") }
+            val results = dao.getScannableProducts(limit, excluded)
+            Log.d(REPO_TAG, "Fetched ${results.size} scannable items")
             results.map { it.toDomain() }
         }
     }

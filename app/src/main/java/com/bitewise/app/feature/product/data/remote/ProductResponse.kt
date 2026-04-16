@@ -1,4 +1,4 @@
-package com.bitewise.app.data.api.model
+package com.bitewise.app.feature.product.data.remote
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
