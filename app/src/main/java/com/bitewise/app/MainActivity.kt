@@ -54,10 +54,6 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavBehavior(bottomNav, navController)
     }
 
-    /**
-     * Ensures that clicking Home in the bottom nav always returns to the 
-     * root of the Home graph, clearing any deep-linked fragments.
-     */
     private fun setupBottomNavBehavior(bottomNav: BottomNavigationView, navController: NavController) {
         bottomNav.setOnItemSelectedListener { item ->
             val builder = NavOptions.Builder()

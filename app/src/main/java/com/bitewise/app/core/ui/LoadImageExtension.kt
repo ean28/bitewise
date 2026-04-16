@@ -7,10 +7,6 @@ import coil3.request.placeholder
 import coil3.request.error
 import com.bitewise.app.R
 
-/**
- * Extension for uniform image loading.
- * Provides a single point of truth for placeholders and error handling.
- */
 fun ImageView.loadImage(
     url: String?,
     placeholderRes: Int = R.drawable.ic_image_placeholder,

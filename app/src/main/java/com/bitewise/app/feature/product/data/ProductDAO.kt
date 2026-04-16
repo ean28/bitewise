@@ -16,10 +16,6 @@ interface ProductDAO {
     @Query("SELECT * FROM products")
     suspend fun fetchSearchProductItems(): List<ProductEntity>
 
-    /**
-     * Fetches products that meet the criteria for AI analysis.
-     * Filtering against already analyzed products is now handled in the Repository.
-     */
     @Query("""
         SELECT * FROM products
         WHERE (product_name IS NOT NULL AND product_name != '')
