@@ -10,6 +10,7 @@
     <string name="grade_nova_description">Nova Score is a classification system that categorizes food products into four groups based on the extent and purpose of industrial processing, from unprocessed to ultra-processed (1-4). Unlike Nutri-Score, which focuses on nutrient content, it helps consumers identify how much a food has been altered by industrial additives and manufacturing techniques.</string>
     <string name="grade_nutriscore_description">Nutri-Score is a front-of-pack labeling system that converts the nutritional value of products into a simple code consisting of 5 letters (A to E) and 5 colors (dark green to dark orange). It is designed to help consumers compare the nutritional quality of similar food items at a glance.</string>
     <string name="grade_eco_description">Eco-Score is a labeling system that rates the environmental impact of a food product throughout its entire life cycle, from farming and processing to transport and packaging. It uses a color-coded scale from A (low impact) to E (high impact) to help consumers choose products that are more sustainable for the planet.</string>
+    <string name="onboarding1_text_hint">We need these numbers to calculate your BMR. No lying, we\'ll know! \n Capisce? 🤌</string>
 
     <!--GRADE COMMENTS-->
     <string-array name="nutritional_grade_comments">

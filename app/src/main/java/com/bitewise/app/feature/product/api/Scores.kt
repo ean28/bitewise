@@ -1,4 +1,4 @@
-package com.bitewise.app.domain.models
+package com.bitewise.app.feature.product.api
 
 data class Scores(
     val nutritionGrade: String?,

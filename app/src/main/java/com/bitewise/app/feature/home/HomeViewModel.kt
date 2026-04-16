@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 enum class SafetyShieldStatus {
     SECURE, // Green
     STALE,  // Amber
-    SYNCING // Pulsing
+    SYNCING // Pulsing TODO("NOT PULSING")
 }
 
 class HomeViewModel(
@@ -87,7 +87,7 @@ class HomeViewModel(
             combine(
                 aiRepository.getAnalyzedCountFlow(),
                 _isSyncPromptDismissed,
-                healthScoringEngine.observeRecommendations(limit = 10)
+                healthScoringEngine.observeRecommendations(limit = 20)
             ) { count, dismissed, recommendations ->
                 when {
                     count > 0 -> recommendations.filter { it.analysis != null }
@@ -104,7 +104,7 @@ class HomeViewModel(
         viewModelScope.launch {
             userContext.collectLatest { user ->
                 user?.let {
-                    aiRepository.isCacheStale(it.contextHash).collectLatest { isStale ->
+                    aiRepository.isCacheStale(it.hashCode()).collectLatest { isStale ->
                         _safetyStatus.value = when {
                             _isSyncing.value -> SafetyShieldStatus.SYNCING
                             isStale -> SafetyShieldStatus.STALE
@@ -133,7 +133,7 @@ class HomeViewModel(
     fun manualRefresh() {
         viewModelScope.launch {
             _userContext.value?.let {
-                aiRepository.forceRefreshCache(it.contextHash)
+                aiRepository.forceRefreshCache(it.hashCode())
             }
         }
     }

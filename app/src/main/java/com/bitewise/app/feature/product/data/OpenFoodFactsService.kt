@@ -1,7 +1,7 @@
-package com.bitewise.app.data.api
+package com.bitewise.app.feature.product.data
 
-import com.bitewise.app.data.api.constants.ApiConstants
-import com.bitewise.app.data.api.model.ProductResponse
+import com.bitewise.app.core.network.ApiConstants
+import com.bitewise.app.feature.product.data.remote.ProductResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
