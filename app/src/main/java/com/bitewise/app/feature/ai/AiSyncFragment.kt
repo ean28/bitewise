@@ -60,11 +60,13 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
         binding.sliderBatchSize.addOnChangeListener { _, value, _ ->
             viewModel.setBatchSize(value.toInt())
             binding.txtBatchSizeLabel.text = "AI Batch Size: ${value.toInt()}"
+            binding.btnStartSync.text = "Full Sync (${value.toInt()})"
         }
 
         binding.sliderQuickSyncLimit.addOnChangeListener { _, value, _ ->
             viewModel.setQuickSyncLimit(value.toInt())
             binding.txtQuickSyncLabel.text = "Quick Sync Limit: ${value.toInt()}"
+            binding.btnQuickSync.text = "Quick Sync (${value.toInt()})"
         }
 
         binding.btnQuickSync.setOnClickListener {
@@ -121,7 +123,9 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
                     viewModel.uiState.collectLatest { state ->
                         binding.txtFreshCount.text = state.freshCount.toString()
                         binding.txtStaleCount.text = state.staleCount.toString()
-                        binding.txtEstTokens.text = "~${state.estTokens}"
+                        binding.txtEstTokens.text = "~${(state.estTokensPerBatch)}"
+                        binding.txtEstDuration.text = "${state.estDurationSeconds}s"
+                        binding.txtNeedAnalysisCount.text = state.needAnalysis.toString()
                     }
                 }
 

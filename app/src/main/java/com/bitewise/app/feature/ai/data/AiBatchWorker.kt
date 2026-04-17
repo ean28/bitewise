@@ -9,7 +9,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.bitewise.app.feature.ai.data.local.AiSyncLog
-import com.bitewise.app.feature.ai.AiPayloadProjector
 import com.bitewise.app.feature.ai.api.AiRepository
 import com.bitewise.app.feature.ai.domain.HealthScoringEngine
 import com.bitewise.app.feature.product.api.Product
@@ -52,7 +51,6 @@ class AiBatchWorker(
         var totalTokensUsed = 0
         
         val maxPerRun = inputData.getInt(KEY_MAX_ITEMS, 100) 
-//        val projector = AiPayloadProjector()
 
         try {
             while ((totalSuccess + totalSkipped) < maxPerRun) {
@@ -64,6 +62,7 @@ class AiBatchWorker(
                 val remaining = maxPerRun - (totalSuccess + totalSkipped)
                 val currentBatchSize = if (remaining < batchSize) remaining else batchSize
 
+                // Fetch products for the current batch
                 val products = aiRepository.getNextProductsForAi(lastBarcode, userHash, currentBatchSize)
                 if (products.isEmpty()) {
                     prefs.edit { remove(AiConfiguration.KEY_LAST_BARCODE) }
@@ -100,11 +99,11 @@ class AiBatchWorker(
                         val payload = healthScoringEngine.prepareAiPayload(remoteRequestProducts, user)
                         
                         try {
-                            val tokens = AiTokenEstimator.estimate(payload)
+                            val requestTokens = AiTokenEstimator.estimateSingleBatchTokens(remoteRequestProducts.size, user)
                             val response = geminiService.analyzeBatch(payload)
 
                             if (response != null && response.results.isNotEmpty()) {
-                                totalTokensUsed += tokens
+                                totalTokensUsed += requestTokens
                                 
                                 response.results.forEach { (barcode, analysis) ->
                                     val product = remoteRequestProducts.find { it.code == barcode } ?: return@forEach
@@ -117,19 +116,17 @@ class AiBatchWorker(
                                         productHash = product.hashCode(),
                                         isLocalOverride = false,
                                         syncStatus = AiSyncStatus.SYNCED,
-                                        tokenCost = tokens / remoteRequestProducts.size
+                                        tokenCost = requestTokens / remoteRequestProducts.size
                                     ))
                                 }
                                 
-                                // Restore batch size on success
+                                // Dynamic Batch Scaling
                                 if (batchSize < AiConfiguration.DEFAULT_BATCH_SIZE) {
                                     batchSize = (batchSize + 1).coerceAtMost(AiConfiguration.DEFAULT_BATCH_SIZE)
                                     prefs.edit { putInt(AiConfiguration.KEY_BATCH_SIZE, batchSize) }
                                 }
                             } else {
-                                // Dynamic failure recovery
                                 if (batchSize <= AiConfiguration.MIN_BATCH_SIZE) {
-                                    Log.e(TAG, "Skipping chunk due to persistent AI failure: ${remoteRequestProducts.map { it.code }}")
                                     totalSkipped += remoteRequestProducts.size
                                 } else {
                                     batchSize = (batchSize / 2).coerceAtLeast(AiConfiguration.MIN_BATCH_SIZE)
@@ -149,9 +146,7 @@ class AiBatchWorker(
                         totalSuccess += batchToSave.size
                     }
                     
-                    // Track items that remote AI completely missed from the response
                     totalSkipped += (chunk.size - (batchToSave.size))
-                    
                     lastBarcode = chunk.last().code
                     prefs.edit { putString(AiConfiguration.KEY_LAST_BARCODE, lastBarcode) }
                     

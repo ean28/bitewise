@@ -1,10 +1,53 @@
 package com.bitewise.app.feature.ai.data
 
+import com.bitewise.app.domain.user.models.UserContext
+import kotlinx.serialization.json.Json
+
 object AiTokenEstimator {
     private const val CHARS_PER_TOKEN = 4
+    
+    private val json = Json { 
+        encodeDefaults = false 
+        ignoreUnknownKeys = true
+    }
 
-    fun estimate(text: String): Int {
-        if (text.isEmpty()) return 0
-        return (text.length / CHARS_PER_TOKEN).coerceAtLeast(1)
+    fun estimateSingleBatchTokens(batchSize: Int, user: UserContext?): Int {
+        if (batchSize <= 0) return 0
+        
+        val systemPromptLen = AiCommunicationSchema.SYSTEM_PROMPT.length
+        
+        val userPayloadLen = user?.let {
+            val payload = AiCommunicationSchema.UserPayload(
+                age = it.age,
+                weight = it.weight,
+                height = it.height,
+                activity = it.activity,
+                conditions = it.conditions,
+                allergies = it.allergies,
+                diet = it.dietType
+            )
+            try {
+                json.encodeToString(payload).length
+            } catch (e: Exception) {
+                250
+            }
+        } ?: 250
+
+        val avgProductSize = 580
+        
+        val totalChars = systemPromptLen + userPayloadLen + (batchSize * avgProductSize)
+        
+        return (totalChars / CHARS_PER_TOKEN).coerceAtLeast(1)
+    }
+    fun estimateTotalSyncTokens(totalItems: Int, batchSize: Int, user: UserContext?): Int {
+        if (totalItems <= 0 || batchSize <= 0) return 0
+        val numBatches = (totalItems + batchSize - 1) / batchSize
+        return numBatches * estimateSingleBatchTokens(batchSize, user)
+    }
+
+    fun estimateDurationSeconds(totalItems: Int, batchSize: Int): Int {
+        if (totalItems <= 0 || batchSize <= 0) return 0
+        val numBatches = (totalItems + batchSize - 1) / batchSize
+        return numBatches * 5
     }
 }

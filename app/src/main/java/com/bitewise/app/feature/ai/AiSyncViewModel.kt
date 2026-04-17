@@ -12,13 +12,7 @@ import com.bitewise.app.feature.ai.api.AiRepository
 import com.bitewise.app.domain.user.repository.UserRepository
 import com.bitewise.app.feature.ai.data.AiConfiguration
 import com.bitewise.app.feature.ai.data.AiTokenEstimator
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AiSyncViewModel(
@@ -30,19 +24,12 @@ class AiSyncViewModel(
 
     private val prefs = context.applicationContext.getSharedPreferences(AiConfiguration.PREFS_NAME, Context.MODE_PRIVATE)
 
-    private val _uiState = MutableStateFlow(SyncPreFlightState())
-    val uiState: StateFlow<SyncPreFlightState> = _uiState.asStateFlow()
-
     private val _batchSize = MutableStateFlow(prefs.getInt(AiConfiguration.KEY_BATCH_SIZE, AiConfiguration.DEFAULT_BATCH_SIZE))
-//    val batchSize: StateFlow<Int> = _batchSize.asStateFlow()
+    val batchSize: StateFlow<Int> = _batchSize.asStateFlow()
 
     private val _quickSyncLimit = MutableStateFlow(prefs.getInt("ai_quick_sync_limit", 10))
-    //val quickSyncLimit: StateFlow<Int> = _quickSyncLimit.asStateFlow()
 
-    private val _isUserComplete = MutableStateFlow(false)
-    val isUserComplete: StateFlow<Boolean> = _isUserComplete.asStateFlow()
-
-    private val _hasInterruptedSync = MutableStateFlow(false)
+    private val _hasInterruptedSync = MutableStateFlow(prefs.contains(AiConfiguration.KEY_LAST_BARCODE))
     val hasInterruptedSync: StateFlow<Boolean> = _hasInterruptedSync.asStateFlow()
 
     val syncLogs: StateFlow<List<AiSyncLog>> = aiRepository.getRecentSyncLogs()
@@ -50,12 +37,42 @@ class AiSyncViewModel(
 
     val workInfos: StateFlow<List<WorkInfo>> = workManager.getWorkInfosByTagFlow("AiSync")
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val uiState: StateFlow<SyncPreFlightState> = combine(
+        aiRepository.getAnalyzedCountFlow(),
+        userRepository.getUserContext(),
+        _batchSize
+    ) { _, user, currentBatchSize -> 
+        user to currentBatchSize
+    }
+    .map { (user, currentBatchSize) ->
+        if (user == null || !user.isComplete()) {
+            SyncPreFlightState()
+        } else {
+            val hash = user.hashCode()
+            val stale = aiRepository.getStaleItemCount(hash)
+            val needingSync = aiRepository.getItemsNeedingSyncCount(hash)
+            val fresh = aiRepository.getFreshItemCount(hash)
+            
+            val totalToProcess = stale + needingSync
+            
+            SyncPreFlightState(
+                freshCount = fresh,
+                staleCount = stale,
+                needAnalysis = needingSync,
+                estTokensPerBatch = AiTokenEstimator.estimateSingleBatchTokens(currentBatchSize, user),
+                totalEstTokens = AiTokenEstimator.estimateTotalSyncTokens(totalToProcess, currentBatchSize, user),
+                estDurationSeconds = AiTokenEstimator.estimateDurationSeconds(totalToProcess, currentBatchSize),
+                maxBatchSize = needingSync.coerceAtLeast(AiConfiguration.MIN_BATCH_SIZE)
+            )
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SyncPreFlightState())
+
+    val isUserComplete: StateFlow<Boolean> = userRepository.getUserContext()
+        .map { it?.isComplete() == true }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     init {
-        loadPreFlightStats()
         observeSettings()
-        checkUserCompleteness()
-        checkInterruptedSync()
     }
 
     private fun observeSettings() {
@@ -71,18 +88,6 @@ class AiSyncViewModel(
         }
     }
 
-    private fun checkUserCompleteness() {
-        viewModelScope.launch {
-            userRepository.getUserContext().collectLatest { user ->
-                _isUserComplete.value = user?.isComplete() == true
-            }
-        }
-    }
-
-    private fun checkInterruptedSync() {
-        _hasInterruptedSync.value = prefs.contains(AiConfiguration.KEY_LAST_BARCODE)
-    }
-
     fun setBatchSize(size: Int) {
         _batchSize.value = size
     }
@@ -91,27 +96,8 @@ class AiSyncViewModel(
         _quickSyncLimit.value = limit
     }
 
-    fun loadPreFlightStats() {
-        viewModelScope.launch {
-            val user = userRepository.getUserContext().first() ?: return@launch
-            val hash = user.hashCode()
-            val stale = aiRepository.getStaleItemCount(hash)
-            val fresh = aiRepository.getFreshItemCount(hash)
-            
-            // Estimating ~350 tokens per product (Input + Output)
-            val estTokens = stale * 350
-            
-            _uiState.value = SyncPreFlightState(
-                freshCount = fresh,
-                staleCount = stale,
-                estTokens = estTokens,
-                estDuration = stale * 2 // ~2 seconds per item including delay
-            )
-        }
-    }
-
     fun startSync(isQuick: Boolean = false) {
-        if (!_isUserComplete.value) return
+        if (!isUserComplete.value) return
         
         if (!hasInterruptedSync.value) {
             prefs.edit { remove(AiConfiguration.KEY_LAST_BARCODE) }
@@ -139,15 +125,13 @@ class AiSyncViewModel(
     fun clearCache() {
         viewModelScope.launch {
             val user = userRepository.getUserContext().first()
-            if (user != null) {
-                aiRepository.forceRefreshCache(user.hashCode())
-            } else {
-                //aiRepository.clearAllAnalyses()
-                Log.d("AI_SYNC_FRAGMENT", "Cleared Cache")
+            user?.let {
+                Log.d("AiSyncViewModel", "Forcing refresh of cache for hash: ${it.hashCode()}")
+                aiRepository.forceRefreshCache(it.hashCode())
+                
+                _hasInterruptedSync.value = false
+                prefs.edit { remove(AiConfiguration.KEY_LAST_BARCODE) }
             }
-            //TODO("handle graceful clear")
-            //cancelInterruptedSync()
-            loadPreFlightStats()
         }
     }
 }
@@ -155,6 +139,9 @@ class AiSyncViewModel(
 data class SyncPreFlightState(
     val freshCount: Int = 0,
     val staleCount: Int = 0,
-    val estTokens: Int = 0,
-    val estDuration: Int = 0
+    val needAnalysis: Int = 0,
+    val estTokensPerBatch: Int = 0,
+    val totalEstTokens: Int = 0,
+    val estDurationSeconds: Int = 0,
+    val maxBatchSize: Int = 150
 )

@@ -45,6 +45,7 @@ class GeminiService(private val systemInstruction: String) {
         
         return try {
             val response = model.generateContent(payload)
+            Log.d("GEMINI_PAYLOAD", "syst")
             val text = response.text
             if (text == null) {
                 Log.w("GeminiService", "Gemini returned a null text response. Prompt Feedback: ${response.promptFeedback}")
