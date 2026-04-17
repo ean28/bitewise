@@ -31,14 +31,20 @@ class ViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(SearchViewModel::class.java) -> {
-                SearchViewModel(productRepository) as T
+                try {
+                    SearchViewModel(
+                        productRepository,
+                        aiRepository!!
+                    ) as T
+                } catch (e: Exception) {
+                    throw RuntimeException("Error: ", e)
+                }
             }
             modelClass.isAssignableFrom(ProductDetailViewModel::class.java) -> {
                 ProductDetailViewModel(
                     productRepository,
                     recentProductRepository!!,
                     aiRepository!!
-
                 ) as T
             }
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {

@@ -29,24 +29,23 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val app = (requireActivity().application as BiteWiseApplication)
+        setupViewModel()
+        saveRecentProductClickToRecent()
+        setupRecyclerView()
+        observeData()
+    }
+
+    private fun setupViewModel() {
+        val app = requireActivity().application as BiteWiseApplication
         val factory = ViewModelFactory(
             application = app,
-            productRepository = app.productRepository
+            productRepository = app.productRepository,
+            aiRepository = app.aiRepository
         )
         viewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
+    }
 
-        adapter = SearchTileAdapter { selectedProduct ->
-            val bundle = Bundle().apply {
-                putString("arg_barcode", selectedProduct.code)
-            }
-
-            findNavController().navigate(
-                com.bitewise.app.R.id.action_nav_search_to_productDetailFragment,
-                bundle
-            )
-        }
-
+    private fun setupRecyclerView() {
         binding.recyclerFoodGrid.layoutManager =
             GridLayoutManager(requireContext(), 3)
         binding.recyclerFoodGrid.adapter = adapter
@@ -69,15 +68,33 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
 
         val countryAdapter = ArrayAdapter(
             requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
+            android.R.layout.simple_dropdown_item_1line,
             CountryList.COUNTRIES
         )
-
         binding.countryDropdown.setAdapter(countryAdapter)
-        binding.countryDropdown.setOnClickListener {
-            binding.countryDropdown.showDropDown()
-        }
 
+        binding.countryDropdown.setOnItemClickListener { _, _, position, _ ->
+            val selectedCountry = countryAdapter.getItem(position)
+            selectedCountry?.let {
+                filterResultsByCountry(it.name)
+            }
+        }
+    }
+
+    private fun saveRecentProductClickToRecent() {
+        adapter = SearchTileAdapter { selectedProduct : SearchTileUiState ->
+            val bundle = Bundle().apply {
+                putString("arg_barcode", selectedProduct.product.code)
+            }
+
+            findNavController().navigate(
+                com.bitewise.app.R.id.action_nav_search_to_productDetailFragment,
+                bundle
+            )
+        }
+    }
+
+    private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.searchState.collectLatest { state ->
                 when (state) {
@@ -86,7 +103,7 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
                     }
                     is UiState.Success -> {
                         val results = state.data
-                        adapter.setItems(results)
+                        adapter.submitList(results)
                         binding.txtSearchResults.text = "${results.size} results found"
                     }
                     is UiState.Error -> {
