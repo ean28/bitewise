@@ -182,7 +182,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <MultiAutoCompleteTextView
+            <AutoCompleteTextView
                 android:id="@+id/multi_diet"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
@@ -228,7 +228,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <MultiAutoCompleteTextView
+            <AutoCompleteTextView
                 android:id="@+id/multi_allergies"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
@@ -274,7 +274,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <MultiAutoCompleteTextView
+            <AutoCompleteTextView
                 android:id="@+id/multi_conditions"
                 android:layout_width="0dp"
                 android:layout_height="48dp"

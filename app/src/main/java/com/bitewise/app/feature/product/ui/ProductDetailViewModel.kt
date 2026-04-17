@@ -23,12 +23,13 @@ class ProductDetailViewModel(
 
     fun fetchProduct(barcode: String) {
         viewModelScope.launch {
-            _productState.value = UiState.Loading
+            if (_productState.value is UiState.Loading) return@launch
+
             try {
                 history.addBarcode(barcode)
                 val product = repository.getProductByBarcode(barcode)
                 val analysis = aiRepository.getExistingAnalysis(barcode)
-                
+
                 if (product != null) {
                     _productState.value = UiState.Success(product to analysis)
                 } else {

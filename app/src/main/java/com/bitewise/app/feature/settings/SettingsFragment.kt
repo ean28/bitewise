@@ -3,7 +3,7 @@ package com.bitewise.app.feature.settings
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.MultiAutoCompleteTextView
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -91,15 +91,17 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
     }
 
     private fun setupMultiSelectLogic(
-        textView: MultiAutoCompleteTextView,
+        textView: AutoCompleteTextView,
         addButton: MaterialButton,
         chipGroup: ChipGroup,
         suggestions: List<String>,
         selectedList: MutableList<String>
     ) {
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, suggestions)
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            suggestions)
         textView.setAdapter(adapter)
-        textView.setTokenizer(MultiAutoCompleteTextView.CommaTokenizer())
 
         val addItem = {
             val fullText = textView.text.toString()

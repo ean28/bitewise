@@ -19,13 +19,13 @@ class OnboardingViewModel(
         return true
     }
 
-    fun isLifestyleValid(): Boolean {
-        return true
-    }
-
-    fun isHealthValid(): Boolean {
-        return true
-    }
+//    fun isLifestyleValid(): Boolean {
+//        return true
+//    }
+//
+//    fun isHealthValid(): Boolean {
+//        return true
+//    }
 
     fun completeOnboarding() {
         viewModelScope.launch {

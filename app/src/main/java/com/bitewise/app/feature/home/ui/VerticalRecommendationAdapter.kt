@@ -37,7 +37,6 @@ class VerticalRecommendationAdapter(
             // AI Verified Label visibility
             binding.txtAiLabel.visibility = if (state.analysis != null) View.VISIBLE else View.GONE
 
-            // Colorize score based on value
             val scoreColor = when {
                 scoreInt >= 80 -> "#2E7D32" // Green
                 scoreInt >= 50 -> "#F9A825" // Amber
@@ -50,9 +49,8 @@ class VerticalRecommendationAdapter(
             binding.txtTileName.setTextColor("#212121".toColorInt())
             binding.containerScore.setBackgroundColor("#F5F5F5".toColorInt())
 
-            // Local Safety Guardrail Check (Immediate UI Response)
             if (state.isSafetyRisk) {
-                binding.root.setCardBackgroundColor("#FFEBEE".toColorInt()) // Light Red
+                binding.root.setCardBackgroundColor("#FFEBEE".toColorInt())
                 binding.containerScore.setBackgroundColor("#FFCDD2".toColorInt())
                 binding.txtTileName.text = "⚠️ HIGH RISK: ${product.name}"
                 binding.txtTileBrand.text = state.safetyReasoning ?: "Allergen Detected"

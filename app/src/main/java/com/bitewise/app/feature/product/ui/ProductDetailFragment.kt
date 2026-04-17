@@ -32,6 +32,13 @@ class ProductDetailFragment : BaseFragment<FragmentProductInformationBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupViewModel()
+        setupRecycleView()
+        setupListeners()
+        observeData()
+    }
+
+    private fun setupViewModel(){
         val app = (requireActivity().application as BiteWiseApplication)
         val factory = ViewModelFactory(
             application = app,
@@ -42,13 +49,18 @@ class ProductDetailFragment : BaseFragment<FragmentProductInformationBinding>(
             recentProductRepository = app.recentProductRepository
         )
         viewModel = ViewModelProvider(this, factory)[ProductDetailViewModel::class.java]
+    }
 
+    private fun setupRecycleView(){
         binding.recyclerProductInformation.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         barcode?.let { code ->
             viewModel.fetchProduct(code)
         }
+    }
+
+    private fun observeData(){
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.productState.collectLatest { state ->
@@ -81,12 +93,13 @@ class ProductDetailFragment : BaseFragment<FragmentProductInformationBinding>(
                 }
             }
         }
+    }
 
+    private fun setupListeners(){
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
     }
-
     companion object {
         private const val ARG_BARCODE = "arg_barcode"
     }
