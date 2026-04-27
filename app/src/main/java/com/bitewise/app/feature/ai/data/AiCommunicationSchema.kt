@@ -9,24 +9,68 @@ object AiCommunicationSchema {
     //
     val SYSTEM_PROMPT =
         """
-        You are the BiteWise expert nutrition assistant. Your goal is to analyze a batch of food products for a specific user.
+        You are the BiteWise expert nutrition assistant. Evaluate food products and assign a 0–100 health suitability score based on the user's profile.
+        
+        [ SCORING ]
+        Start from ~50 and adjust using:
+        
+        1. SAFETY (Critical)
+        - If any ingredient or allergen suggests presence of user's allergens → score = 0
+        - Be cautious with partial or unclear matches
+        
+        2. USER ALIGNMENT (High)
+        - Evaluate alignment with diet and health conditions
+        - Apply proportional penalties/rewards (no hard thresholds unless extreme)
+        
+        3. NUTRITIONAL BALANCE (High)
+        - Sugar, unhealthy fats, salt → negative
+        - Protein, fiber, whole ingredients → positive
+        - Evaluate in context, not isolation
+        
+        4. PROCESSING (Moderate)
+        - Ultra-processed, additives, refined ingredients → slight penalty
+        - Whole/minimally processed → slight reward
+        
+        [ DATA ]
+        - Values are per 100g/ml
+        - Keys:
+          "en" kcal, "su" sugar, "ca" carbs, "fi" fiber, "pr" protein,
+          "fa" fat, "sf" sat fat, "sa" salt, "so" sodium,
+          "ch" cholesterol, "tf" trans fat
+        - Missing data → do not assume
+        
+        [ CALIBRATION ]
+        - Score comparatively within the batch
+        - Reflect meaningful differences
+        - Avoid clustering or unjustified large gaps
+        
+        [ CONSISTENCY ]
+        - Similar products → similar scores/tags
+        - Avoid random variation
+        
+        [ DATA QUALITY ]
+        - Limited data → avoid extreme scores, lean moderate
+        
+        [ STABILITY ]
+        - Do not over-stack penalties
+        - Merge related negatives into one stronger effect
+        - Keep reasonable distribution unless clearly harmful
         
         [ USER_CONTEXT ]
-        The user's health profile is provided in the 'u' object:
         $USER_CONTEXT_BLUEPRINT
         
         [ DATA_PAYLOAD ]
-        The products to analyze are provided in the 'ps' array:
         $PRODUCT_DATA_BLUEPRINT
         
-        [ RESPONSE_FORMAT ]
-        You MUST return valid JSON identical to this structure:
+        [ RESPONSE ]
+        Return ONLY valid JSON:
         $RESPONSE_BLUEPRINT
         
         [ RULES ]
-        1. SAFETY: If an ingredient in 'ing' or manufacturer tag in 'alg' matches any entry in user's 'alg' list, the score MUST be 0.
-        2. CONCISE: Keep 'summary' to 1-2 short sentences.
-        3. DATA: Do not invent products. Only analyze the ones in 'ps'.
+        - Scores must be realistic and consistent
+        - Avoid extremes unless justified
+        - Tags: 3–6 concise labels
+        - Summary: concise, information-dense, no filler
     """.trimIndent()
 
     //
@@ -40,7 +84,7 @@ object AiCommunicationSchema {
           "act": String (Activity Level),
           "cond": [String] (Conditions),
           "alg": [String] (Allergies),
-          "diet": String (Dietary Type)
+          "diet": [String] (Dietary Type)
         }
     """
 
@@ -62,7 +106,7 @@ object AiCommunicationSchema {
           "results": {
             "barcode_id": {
               "score": Double (0-100),
-              "tags": [String] (2-4 tags),
+              "tags": [String] (3-6 tags),
               "summary": String (Concise reasoning)
             }
           }
@@ -75,29 +119,56 @@ object AiCommunicationSchema {
 
     @Serializable
     data class BatchRequest(
-        @SerialName("u") val user: UserPayload,
-        @SerialName("ps") val products: List<ProductPayload>
+        @SerialName("u")
+        val user: UserPayload,
+
+        @SerialName("ps")
+        val products: List<ProductPayload>
     )
 
     @Serializable
     data class UserPayload(
-        @SerialName("age") val age: Int,
-        @SerialName("w") val weight: Double,
-        @SerialName("h") val height: Double,
-        @SerialName("act") val activity: String,
-        @SerialName("cond") val conditions: List<String>,
-        @SerialName("alg") val allergies: List<String>,
-        @SerialName("diet") val diet: String
+        @SerialName("age")
+        val age: Int,
+
+        @SerialName("w")
+        val weight: Double,
+
+        @SerialName("h")
+        val height: Double,
+
+        @SerialName("act")
+        val activity: String,
+
+        @SerialName("cond")
+        val conditions: List<String>,
+
+        @SerialName("alg")
+        val allergies: List<String>,
+
+        @SerialName("diet")
+        val diet: String
     )
 
     @Serializable
     data class ProductPayload(
-        @SerialName("id") val id: String,
-        @SerialName("n") val name: String,
-        @SerialName("nut") val nutrients: Map<String, String>,
-        @SerialName("ing") val ingredients: String,
-        @SerialName("alg") val allergens: String,
-        @SerialName("ph") val productHash: Int
+        @SerialName("id")
+        val id: String,
+
+        @SerialName("n")
+        val name: String,
+
+        @SerialName("nut")
+        val nutrients: Map<String, String>,
+
+        @SerialName("ing")
+        val ingredients: String,
+
+        @SerialName("alg")
+        val allergens: String,
+
+        @SerialName("ph")
+        val productHash: Int
     )
 
     @Serializable

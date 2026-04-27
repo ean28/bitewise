@@ -7,10 +7,9 @@ object AiConfiguration {
     const val TOP_K = 32
     const val TOP_P = 1f
 
-    // 100 items per batch = 2,000 items (20 RPD)
-    const val DEFAULT_BATCH_SIZE = 100
-    const val MIN_BATCH_SIZE = 1
-    const val MAX_BATCH_SIZE = 150
+    const val DEFAULT_BATCH_SIZE = 80
+    const val MAX_BATCH_SIZE = 400
+    const val MIN_BATCH_SIZE = 80
 
     // Timing guardrail for 10 RPM limit
     const val REQUEST_DELAY_MS = 1500L
@@ -18,7 +17,7 @@ object AiConfiguration {
     const val PREFS_NAME = "ai_settings"
     const val KEY_BATCH_SIZE = "ai_batch_size"
     const val KEY_LAST_BARCODE = "ai_last_barcode"
-    const val KEY_RETRY_DELAY = "ai_retry_delay"
+//    const val KEY_RETRY_DELAY = "ai_retry_delay"
 
     // Heuristic Scoring Constants
     object Heuristics {

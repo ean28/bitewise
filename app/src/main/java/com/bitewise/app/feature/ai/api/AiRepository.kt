@@ -7,7 +7,6 @@ import com.bitewise.app.feature.product.api.Product
 import kotlinx.coroutines.flow.Flow
 
 interface AiRepository {
-    suspend fun getValidProductsForAiScan(limit: Int): List<Product>
     suspend fun getNextProductsForAi(lastBarcode: String, contextHash: Int, limit: Int): List<Product>
     suspend fun getExistingAnalysis(barcode: String): AiAnalysisEntity?
     

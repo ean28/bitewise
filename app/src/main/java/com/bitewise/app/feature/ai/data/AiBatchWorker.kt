@@ -11,9 +11,7 @@ import androidx.work.workDataOf
 import com.bitewise.app.feature.ai.data.local.AiSyncLog
 import com.bitewise.app.feature.ai.api.AiRepository
 import com.bitewise.app.feature.ai.domain.HealthScoringEngine
-import com.bitewise.app.feature.product.api.Product
 import com.bitewise.app.domain.user.repository.UserRepository
-import com.bitewise.app.feature.ai.api.LocalSafetyStatus
 import com.bitewise.app.feature.ai.data.local.AiAnalysisEntity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
@@ -28,7 +26,7 @@ class AiBatchWorker(
 ) : CoroutineWorker(context, params) {
 
     companion object {
-        private const val TAG = "AiBatchWorker"
+        private const val TAG = "AI_BatchWorker"
         const val KEY_MAX_ITEMS = "max_items"
     }
 
@@ -39,8 +37,11 @@ class AiBatchWorker(
         }
 
         val prefs = applicationContext.getSharedPreferences(AiConfiguration.PREFS_NAME, Context.MODE_PRIVATE)
-        var batchSize = prefs.getInt(AiConfiguration.KEY_BATCH_SIZE, AiConfiguration.DEFAULT_BATCH_SIZE)
-            .coerceIn(AiConfiguration.MIN_BATCH_SIZE, AiConfiguration.MAX_BATCH_SIZE)
+        
+        val targetBatchSize = prefs.getInt(AiConfiguration.KEY_BATCH_SIZE, AiConfiguration.DEFAULT_BATCH_SIZE)
+            .coerceIn(10, AiConfiguration.MAX_BATCH_SIZE)
+        
+        var batchSize = targetBatchSize
 
         val user = userRepository.getUserContext().firstOrNull() ?: return Result.failure()
         val userHash = user.hashCode()
@@ -69,76 +70,51 @@ class AiBatchWorker(
                     break
                 }
 
+                //TODO(refactor): choose between chunked or LIMIT in repository
                 val chunks = products.chunked(currentBatchSize)
                 
                 for (chunk in chunks) {
                     if (isStopped) return Result.failure()
 
-                    val remoteRequestProducts = mutableListOf<Product>()
                     val batchToSave = mutableListOf<AiAnalysisEntity>()
+                    val payload = healthScoringEngine.prepareAiPayload(chunk, user)
+                    
+                    try {
+                        val requestTokens = AiTokenEstimator.estimateSingleBatchTokens(chunk.size, user)
+                        val response = geminiService.analyzeBatch(payload)
 
-                    chunk.forEach { product ->
-                        val safety = healthScoringEngine.calculateLocalSafety(product, user)
-                        if (safety.status == LocalSafetyStatus.CRITICAL_DANGER) {
-                            batchToSave.add(AiAnalysisEntity(
-                                barcode = product.code,
-                                score = safety.score.toDouble(),
-                                summary = safety.reasoning ?: "Local Safety Guardrail Triggered",
-                                dynamicTags = "High Risk, Allergy Match",
-                                userContextHash = userHash,
-                                productHash = product.hashCode(),
-                                isLocalOverride = true,
-                                syncStatus = AiSyncStatus.LOCAL_ONLY
-                            ))
-                        } else {
-                            remoteRequestProducts.add(product)
-                        }
-                    }
-
-                    if (remoteRequestProducts.isNotEmpty()) {
-                        val payload = healthScoringEngine.prepareAiPayload(remoteRequestProducts, user)
-                        
-                        try {
-                            val requestTokens = AiTokenEstimator.estimateSingleBatchTokens(remoteRequestProducts.size, user)
-                            val response = geminiService.analyzeBatch(payload)
-
-                            if (response != null && response.results.isNotEmpty()) {
-                                totalTokensUsed += requestTokens
-                                
-                                response.results.forEach { (barcode, analysis) ->
-                                    val product = remoteRequestProducts.find { it.code == barcode } ?: return@forEach
-                                    batchToSave.add(AiAnalysisEntity(
-                                        barcode = barcode,
-                                        score = analysis.score,
-                                        summary = analysis.summary,
-                                        dynamicTags = analysis.tags.joinToString(", "),
-                                        userContextHash = userHash,
-                                        productHash = product.hashCode(),
-                                        isLocalOverride = false,
-                                        syncStatus = AiSyncStatus.SYNCED,
-                                        tokenCost = requestTokens / remoteRequestProducts.size
-                                    ))
-                                }
-                                
-                                // Dynamic Batch Scaling
-                                if (batchSize < AiConfiguration.DEFAULT_BATCH_SIZE) {
-                                    batchSize = (batchSize + 1).coerceAtMost(AiConfiguration.DEFAULT_BATCH_SIZE)
-                                    prefs.edit { putInt(AiConfiguration.KEY_BATCH_SIZE, batchSize) }
-                                }
-                            } else {
-                                if (batchSize <= AiConfiguration.MIN_BATCH_SIZE) {
-                                    totalSkipped += remoteRequestProducts.size
-                                } else {
-                                    batchSize = (batchSize / 2).coerceAtLeast(AiConfiguration.MIN_BATCH_SIZE)
-                                    prefs.edit { putInt(AiConfiguration.KEY_BATCH_SIZE, batchSize) }
-                                    return Result.failure()
-                                }
+                        if (response != null && response.results.isNotEmpty()) {
+                            totalTokensUsed += requestTokens
+                            
+                            response.results.forEach { (barcode, analysis) ->
+                                val product = chunk.find { it.code == barcode } ?: return@forEach
+                                batchToSave.add(AiAnalysisEntity(
+                                    barcode = barcode,
+                                    score = analysis.score,
+                                    summary = analysis.summary,
+                                    dynamicTags = analysis.tags.joinToString(", "),
+                                    userContextHash = userHash,
+                                    productHash = product.hashCode(),
+                                    isLocalOverride = false,
+                                    syncStatus = AiSyncStatus.SYNCED,
+                                    tokenCost = requestTokens / chunk.size
+                                ))
                             }
-                            delay(AiConfiguration.REQUEST_DELAY_MS) 
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Batch request failed: ${e.message}")
-                            return Result.failure()
+                            // Dynamic Batch Scaling: Grow back towards the user's target if successful
+                        } else {
+                            // If API fails, handle reduction
+                            if (batchSize <= 10) {
+                                totalSkipped += chunk.size
+                            } else {
+                                batchSize = (batchSize / 2).coerceAtLeast(10)
+                                prefs.edit { putInt(AiConfiguration.KEY_BATCH_SIZE, batchSize) }
+                                return Result.failure()
+                            }
                         }
+                        delay(AiConfiguration.REQUEST_DELAY_MS) 
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Batch request failed: ${e.message}")
+                        return Result.failure()
                     }
 
                     if (batchToSave.isNotEmpty()) {

@@ -1,7 +1,6 @@
 package com.bitewise.app.feature.ai.data
+
 import com.bitewise.app.feature.ai.data.local.AiAnalysisEntity
-
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,7 +12,7 @@ interface AiAnalysisDAO {
     @Query("SELECT barcode FROM product_ai_analysis")
     suspend fun getAnalyzedBarcodes(): List<String>
 
-    @Query("SELECT barcode FROM product_ai_analysis WHERE userContextHash = :contextHash")
+    @Query("SELECT barcode FROM product_ai_analysis WHERE user_context_hash = :contextHash")
     suspend fun getAnalyzedBarcodesForContext(contextHash: Int): List<String>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -28,15 +27,15 @@ interface AiAnalysisDAO {
     @Query("SELECT COUNT(*) FROM product_ai_analysis")
     fun getAnalyzedCount(): Flow<Int>
 
-    @Query("SELECT COUNT(*) FROM product_ai_analysis WHERE userContextHash != :currentHash")
+    @Query("SELECT COUNT(*) FROM product_ai_analysis WHERE user_context_hash != :currentHash")
     suspend fun getCountWithDifferentHash(currentHash: Int): Int
 
-    @Query("DELETE FROM product_ai_analysis WHERE userContextHash != :currentHash")
+    @Query("DELETE FROM product_ai_analysis WHERE user_context_hash != :currentHash")
     suspend fun deleteStaleAnalysis(currentHash: Int)
 
     @Query("DELETE FROM product_ai_analysis")
     suspend fun clearAllAnalysis()
 
-    @Query("SELECT * FROM product_ai_analysis ORDER BY lastAnalyzed DESC")
+    @Query("SELECT * FROM product_ai_analysis ORDER BY last_analyzed DESC")
     fun getAllAnalyses(): Flow<List<AiAnalysisEntity>>
 }

@@ -46,7 +46,7 @@ class AiPayloadProjector {
             activity = user.activity,
             conditions = user.conditions,
             allergies = user.allergies,
-            diet = user.dietType
+            diet = user.dietary.joinToString()
         )
 
         val productsPayload = products.map { product ->
@@ -86,7 +86,7 @@ class AiPayloadProjector {
         return String.format(Locale.US, "%.4f", value).trimEnd('0').trimEnd('.')
     }
 
-    private fun normalizeToGrams(name: String, amount: Float, unit: String): Float {
+    private fun normalizeToGrams(name: String = "", amount: Float, unit: String): Float {
         return when (unit.lowercase()) {
             "mg" -> amount / 1000f
             "µg", "ug" -> amount / 1000000f
