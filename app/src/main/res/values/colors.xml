@@ -35,4 +35,37 @@
     <!-- Safety Status Colors -->
     <color name="green_status">#4CAF50</color>
 
+    <!-- RECOMMENDED  -->
+    <!-- Card Container -->
+    <color name="card_default">@color/white</color>
+    <color name="card_recommended">#F1FFF3</color>
+    <color name="card_slightly_recommended">#FFFEED</color>
+    <color name="card_not_recommended">#FFF2ED</color>
+    <color name="card_dangerous">#FFEDED</color>
+
+    <!-- Score Container -->
+    <color name="score_default">#F5F5F5</color>
+    <color name="score_recommended">#D2FFD4</color>
+    <color name="score_slightly_recommended">#FFF2A2</color>
+    <color name="score_not_recommended">#FBD6A3</color>
+    <color name="score_dangerous">#FBA3A3</color>
+
+    <!-- Text Score -->
+    <color name="tv_score_default">#383737</color>
+    <color name="tv_score_recommended">#2E7D32</color>
+    <color name="tv_score_slightly_recommended">#E9AD22</color>
+    <color name="tv_score_not_recommended">#EF9022</color>
+    <color name="tv_score_dangerous">#C62828</color>
+
+    <!-- Chips and Inputs -->
+    <color name="chip_background_selected">#E8F5E9</color>
+    <color name="chip_close_icon_tint">#66BB6A</color>
+    <color name="chip_background_empty">#10000000</color>
+
+    <!-- Sync Log Status -->
+    <color name="sync_success">#4CAF50</color>
+    <color name="sync_failed">#F44336</color>
+    <color name="sync_partial">#FF9800</color>
+    <color name="sync_default">#757575</color>
+
 </resources>

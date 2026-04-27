@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="15dp"
     android:layout_marginEnd="15dp"
-    android:paddingVertical="12dp">
+    >
 
     <!-- Product Image with Rounded Corners -->
     <com.google.android.material.imageview.ShapeableImageView
@@ -141,16 +141,18 @@
             android:visibility="gone"
             tools:visibility="visible"/>
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group_head_tags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            app:chipSpacingHorizontal="6dp"
-            app:chipSpacingVertical="0dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
     </LinearLayout>
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_head_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        app:chipSpacingHorizontal="6dp"
+        app:chipSpacingVertical="0dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_info_container"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

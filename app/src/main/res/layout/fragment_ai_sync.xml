@@ -163,14 +163,14 @@
                 android:textSize="12sp"
                 android:layout_marginBottom="8dp" />
 
+            <!-- valueFrom set to 0.0 to avoid IllegalStateException when valueTo is set to 80.0 -->
             <com.google.android.material.slider.Slider
                 android:id="@+id/slider_batch_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:value="100.0"
-                android:valueFrom="80.0"
+                android:valueFrom="0.0"
                 android:valueTo="150.0"
-                android:stepSize="10.0"
                 android:layout_marginBottom="16dp" />
 
             <TextView
