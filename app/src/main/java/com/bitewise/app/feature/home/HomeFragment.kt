@@ -12,6 +12,7 @@ import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.R
 import com.bitewise.app.databinding.FragmentHomeScreenBinding
 import com.bitewise.app.core.BaseFragment
+import com.bitewise.app.core.Constants
 import com.bitewise.app.core.UiState
 import com.bitewise.app.core.ViewModelFactory
 import com.bitewise.app.feature.home.ui.HorizontalTileAdapter
@@ -32,6 +33,7 @@ class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
         setupRecyclerViews()
         setupListeners()
         observeData()
+        //TODO: Create pulldown refresh fun
     }
 
     override fun onResume() {
@@ -55,7 +57,7 @@ class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
 
     private fun setupRecyclerViews() {
         recentAdapter = HorizontalTileAdapter { product ->
-            val bundle = Bundle().apply { putString("arg_barcode", product.code) }
+            val bundle = Bundle().apply { putString(Constants.ARG_BARCODE, product.code) }
             findNavController().navigate(R.id.action_nav_home_to_nav_product_detail, bundle)
         }
         binding.recyclerRecentlyViewed.layoutManager = 
@@ -63,7 +65,7 @@ class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
         binding.recyclerRecentlyViewed.adapter = recentAdapter
 
         recommendationAdapter = VerticalRecommendationAdapter { scoredProduct ->
-            val bundle = Bundle().apply { putString("arg_barcode", scoredProduct.product.code) }
+            val bundle = Bundle().apply { putString(Constants.ARG_BARCODE, scoredProduct.product.code) }
             findNavController().navigate(R.id.action_nav_home_to_nav_product_detail, bundle)
         }
         binding.recyclerRecommendations.layoutManager = LinearLayoutManager(requireContext())
@@ -107,6 +109,11 @@ class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
                 launch {
                     viewModel.userContext.collectLatest { user ->
                         binding.txtStatusContent.text = if (user != null) "Active Profile" else "Setup Required"
+                    }
+                }
+                launch {
+                    viewModel.suggestionText.collectLatest { suggestion ->
+                        binding.txtSuggestionContent.text = suggestion
                     }
                 }
                 launch {

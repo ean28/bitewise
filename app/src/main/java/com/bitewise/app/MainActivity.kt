@@ -12,6 +12,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.bitewise.app.feature.onboarding.OnboardingActivity
+import com.bitewise.app.feature.onboarding.OnboardingManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -20,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        if (!OnboardingActivity.onboardingAlreadyDone(this)) {
+        if (!OnboardingManager.isOnboardingComplete(this)) {
             startActivity(Intent(this, OnboardingActivity::class.java))
             finish() 
             return
@@ -36,7 +37,10 @@ class MainActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(left = systemBars.left, top = systemBars.top, right = systemBars.right)
+            v.updatePadding(
+                left = systemBars.left,
+                top = systemBars.top,
+                right = systemBars.right)
             insets
         }
 

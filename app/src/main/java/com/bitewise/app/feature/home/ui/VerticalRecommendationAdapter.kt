@@ -1,11 +1,11 @@
 package com.bitewise.app.feature.home.ui
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.toColorInt
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bitewise.app.R
 import com.bitewise.app.databinding.HomeItemTileVerticalBinding
 import com.bitewise.app.core.ui.GradeManager
 import com.bitewise.app.core.ui.loadImage
@@ -37,23 +37,28 @@ class VerticalRecommendationAdapter(
             // AI Verified Label visibility
             binding.txtAiLabel.visibility = if (state.analysis != null) View.VISIBLE else View.GONE
 
-            val scoreColor = when {
-                scoreInt >= 80 -> "#2E7D32" // Green
-                scoreInt >= 50 -> "#F9A825" // Amber
-                else -> "#C62828"           // Red
-            }
-            binding.txtScoreValue.setTextColor(scoreColor.toColorInt())
-
-            // Reset UI state
-            binding.root.setCardBackgroundColor(Color.WHITE)
-            binding.txtTileName.setTextColor("#212121".toColorInt())
-            binding.containerScore.setBackgroundColor("#F5F5F5".toColorInt())
-
-            if (state.isSafetyRisk) {
-                binding.root.setCardBackgroundColor("#FFEBEE".toColorInt())
-                binding.containerScore.setBackgroundColor("#FFCDD2".toColorInt())
-                binding.txtTileName.text = "⚠️ HIGH RISK: ${product.name}"
-                binding.txtTileBrand.text = state.safetyReasoning ?: "Allergen Detected"
+            val context = binding.root.context
+            when (scoreInt) {
+                in 80..100 -> {
+                    binding.txtScoreValue.setTextColor(ContextCompat.getColor(context, R.color.tv_score_recommended))
+                    binding.containerScore.setBackgroundColor(ContextCompat.getColor(context, R.color.score_recommended))
+                    binding.root.setCardBackgroundColor(ContextCompat.getColor(context, R.color.card_recommended))
+                }
+                in 50 until 80 -> {
+                    binding.txtScoreValue.setTextColor(ContextCompat.getColor(context, R.color.tv_score_slightly_recommended))
+                    binding.containerScore.setBackgroundColor(ContextCompat.getColor(context, R.color.score_slightly_recommended))
+                    binding.root.setCardBackgroundColor(ContextCompat.getColor(context, R.color.card_slightly_recommended))
+                }
+                in 10 until 50 -> {
+                    binding.txtScoreValue.setTextColor(ContextCompat.getColor(context, R.color.tv_score_not_recommended))
+                    binding.containerScore.setBackgroundColor(ContextCompat.getColor(context, R.color.score_not_recommended))
+                    binding.root.setCardBackgroundColor(ContextCompat.getColor(context, R.color.card_not_recommended))
+                }
+                else -> {
+                    binding.txtScoreValue.setTextColor(ContextCompat.getColor(context, R.color.tv_score_dangerous))
+                    binding.containerScore.setBackgroundColor(ContextCompat.getColor(context, R.color.score_dangerous))
+                    binding.root.setCardBackgroundColor(ContextCompat.getColor(context, R.color.card_dangerous))
+                }
             }
 
             binding.root.setOnClickListener {

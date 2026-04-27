@@ -33,10 +33,10 @@ class HeaderViewHolder(
                     val chip = Chip(binding.root.context).apply {
                         text = cleanTag
                         textSize = 10f
-                        // Using a standard height if the material resource is missing
                         chipMinHeight = 32f * binding.root.context.resources.displayMetrics.density
                         isClickable = false
                         isCheckable = false
+                        maxLines = 1
                     }
                     binding.chipGroupHeadTags.addView(chip)
                 }

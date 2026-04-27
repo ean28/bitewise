@@ -2,9 +2,11 @@ package com.bitewise.app.feature.ai.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bitewise.app.R
 import com.bitewise.app.feature.ai.data.local.AiSyncLog
 import com.bitewise.app.databinding.ItemSyncLogBinding
 import java.text.SimpleDateFormat
@@ -29,13 +31,13 @@ class SyncLogAdapter : ListAdapter<AiSyncLog, SyncLogAdapter.ViewHolder>(DiffCal
             binding.txtLogTokens.text = "${item.totalTokens} tokens"
             binding.txtLogStatus.text = item.status
             
-            val statusColor = when(item.status) {
-                "SUCCESS" -> 0xFF4CAF50.toInt()
-                "FAILED" -> 0xFFF44336.toInt()
-                "PARTIAL" -> 0xFFFF9800.toInt()
-                else -> 0xFF757575.toInt()
+            val colorRes = when(item.status) {
+                "SUCCESS" -> R.color.sync_success
+                "FAILED" -> R.color.sync_failed
+                "PARTIAL" -> R.color.sync_partial
+                else -> R.color.sync_default
             }
-            binding.txtLogStatus.setTextColor(statusColor)
+            binding.txtLogStatus.setTextColor(ContextCompat.getColor(binding.root.context, colorRes))
         }
     }
 

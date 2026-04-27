@@ -11,11 +11,14 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 object RetrofitInstance {
 
-    private val json: Json = Json {
+    //unused yet; for future product syncing to/from API
+
+    val json: Json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
+        isLenient = true
     }
-    
+
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }

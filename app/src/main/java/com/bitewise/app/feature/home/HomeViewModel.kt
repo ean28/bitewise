@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 enum class SafetyShieldStatus {
@@ -53,17 +54,21 @@ class HomeViewModel(
     private val _isSyncPromptDismissed = MutableStateFlow(false)
     val isSyncPromptDismissed: StateFlow<Boolean> = _isSyncPromptDismissed.asStateFlow()
 
+    private val _suggestionText = MutableStateFlow("Optimizing your health...")
+    val suggestionText: StateFlow<String> = _suggestionText.asStateFlow()
+
     init {
         observeUserContext()
         observeRecommendations()
         observeStaleState()
         observeSyncRequirement()
+        observeSuggestions()
     }
 
     private fun observeUserContext() {
         viewModelScope.launch {
             userRepository.getUserContext().collectLatest { context ->
-                _userContext.value = context
+                _userContext.update { context }
             }
         }
     }
@@ -77,7 +82,7 @@ class HomeViewModel(
             ) { user, count, dismissed ->
                 user != null && count == 0 && !dismissed
             }.collectLatest { show ->
-                _showSyncPrompt.value = show
+                _showSyncPrompt.update { show }
             }
         }
     }
@@ -87,7 +92,7 @@ class HomeViewModel(
             combine(
                 aiRepository.getAnalyzedCountFlow(),
                 _isSyncPromptDismissed,
-                healthScoringEngine.observeRecommendations(limit = 20)
+                healthScoringEngine.observeRecommendations()
             ) { count, dismissed, recommendations ->
                 when {
                     count > 0 -> recommendations.filter { it.analysis != null }
@@ -95,7 +100,7 @@ class HomeViewModel(
                     else -> emptyList()
                 }
             }.collectLatest { states ->
-                _recommendedProducts.value = UiState.Success(states)
+                _recommendedProducts.update { UiState.Success(states) }
             }
         }
     }
@@ -105,13 +110,15 @@ class HomeViewModel(
             userContext.collectLatest { user ->
                 user?.let {
                     aiRepository.isCacheStale(it.hashCode()).collectLatest { isStale ->
-                        _safetyStatus.value = when {
-                            _isSyncing.value -> SafetyShieldStatus.SYNCING
-                            isStale -> SafetyShieldStatus.STALE
-                            else -> SafetyShieldStatus.SECURE
+                        _safetyStatus.update {
+                            when {
+                                _isSyncing.value -> SafetyShieldStatus.SYNCING
+                                isStale -> SafetyShieldStatus.STALE
+                                else -> SafetyShieldStatus.SECURE
+                            }
                         }
                         
-                        if (isStale && !_isSyncing.value && _showSyncPrompt.value == false) {
+                        if (isStale && !_isSyncing.value && !_showSyncPrompt.value) {
                             triggerAiSync()
                         }
                     }
@@ -120,16 +127,32 @@ class HomeViewModel(
         }
     }
 
+    private fun observeSuggestions() {
+        viewModelScope.launch {
+            userContext.collectLatest { user ->
+                _suggestionText.update {
+                    when {
+                        user == null -> "Please set up your profile"
+                        user.allergies.isNotEmpty() -> "Watching for ${user.allergies.size} allergens"
+                        user.dietary.isNotEmpty() -> "Aligned with ${user.dietary.first()} diet"
+                        else -> "Personalizing your experience"
+                    }
+                }
+            }
+        }
+    }
+
     private fun triggerAiSync() {
-        _isSyncing.value = true
-        _safetyStatus.value = SafetyShieldStatus.SYNCING
+        _isSyncing.update { true }
+        _safetyStatus.update { SafetyShieldStatus.SYNCING }
         aiRepository.triggerSync()
     }
 
     fun dismissSyncPrompt() {
-        _isSyncPromptDismissed.value = true
+        _isSyncPromptDismissed.update { true }
     }
 
+    //TODO: Call pulldown refresh in fragment
     fun manualRefresh() {
         viewModelScope.launch {
             _userContext.value?.let {
@@ -144,7 +167,7 @@ class HomeViewModel(
             val products = barcodes.mapNotNull { code ->
                 productRepository.getProductByBarcode(code)
             }
-            _recentProducts.value = products
+            _recentProducts.update { products }
         }
     }
 }
