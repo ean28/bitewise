@@ -3,11 +3,9 @@ package com.bitewise.app.feature.product.data.local
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 import kotlinx.serialization.json.JsonElement
 
 @Entity(tableName = "products")
-@TypeConverters(NutrimentsConverter::class)
 data class ProductEntity(
 
     @PrimaryKey

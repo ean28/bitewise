@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDAO {
-    @Query("SELECT * FROM products WHERE search_text Like '%' || :query ||  '%' LIMIT 50")
+    @Query("SELECT * FROM products WHERE search_text Like '%' || :query")
     suspend fun searchProducts(query: String): List<ProductEntity>
 
     @Query("SELECT * FROM products WHERE code = :barcode LIMIT 1")
@@ -29,6 +29,8 @@ interface ProductDAO {
     """)
     suspend fun getNextScannableProducts(lastBarcode: String, limit: Int): List<ProductEntity>
 
+
+    //for android testing
     @Query("""
         SELECT * FROM products
         WHERE (product_name IS NOT NULL AND product_name != '')
@@ -40,6 +42,16 @@ interface ProductDAO {
         LIMIT :limit
     """)
     suspend fun getScannableProducts(limit: Int, excludedBarcodes: List<String>): List<ProductEntity>
+
+    @Query("""
+        SELECT * FROM products
+        WHERE (product_name IS NOT NULL AND product_name != '')
+            AND (nutriments_json IS NOT NULL AND nutriments_json != '{}')
+            AND (ingredients_text IS NOT NULL AND ingredients_text != '')
+            AND (nutriscore_grade IS NOT NULL AND nutriscore_grade != 'unknown' AND nutriscore_grade != 'not-applicable')
+            AND (nova_group IS NOT NULL AND nova_group != '')
+    """)
+    fun getAllScannableProductsFlow(): Flow<List<ProductEntity>>
 
     @Query("""
         SELECT COUNT(*) FROM products

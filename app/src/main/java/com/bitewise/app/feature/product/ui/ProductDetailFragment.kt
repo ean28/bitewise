@@ -67,8 +67,12 @@ class ProductDetailFragment : BaseFragment<FragmentProductInformationBinding>(
                 when (state) {
                     is UiState.Loading -> {
                         // TODO: show loading
+                        binding.recyclerProductInformation.adapter = null
+                        Log.d("ProductDetail", "Loading...")
                     }
                     is UiState.Success -> {
+
+                        Log.d("ProductDetail", "Success: ${state.data}")
                         val (product, analysis) = state.data
                         val rows: List<ProductRowManager> = listOf(
                             ProductRowManager.Header(product, analysis),

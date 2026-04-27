@@ -23,7 +23,7 @@ class ProductDetailViewModel(
 
     fun fetchProduct(barcode: String) {
         viewModelScope.launch {
-            if (_productState.value is UiState.Loading) return@launch
+            _productState.value = UiState.Loading
 
             try {
                 history.addBarcode(barcode)
