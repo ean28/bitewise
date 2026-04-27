@@ -1,6 +1,5 @@
 package com.bitewise.app.feature.ai.domain
 
-import android.util.Log
 import com.bitewise.app.feature.ai.AiPayloadProjector
 import com.bitewise.app.feature.ai.api.AiRepository
 import com.bitewise.app.feature.ai.api.LocalSafetyResult
@@ -20,62 +19,47 @@ class HealthScoringEngine(
     private val aiRepo: AiRepository,
     private val projector: AiPayloadProjector
 ) {
-    fun observeRecommendations(limit: Int = 10): Flow<List<ScoredProduct>> {
+
+    fun observeRecommendations(): Flow<List<ScoredProduct>> {
         return combine(
             userRepo.getUserContext(),
-            aiRepo.getAllAnalyses()
-        ) { user, analyses ->
+            aiRepo.getAllAnalyses(),
+            productRepo.getScannableProductsFlow()
+        ) { user, analyses, allProducts ->
             if (user == null) return@combine emptyList()
 
-            if (analyses.isNotEmpty()) {
-                // If we have synced items, show ALL of them
-                analyses.mapNotNull { analysis ->
-                    productRepo.getProductByBarcode(analysis.barcode)?.let { product ->
-                        val safety = calculateLocalSafety(product, user)
-                        ScoredProduct(
-                            product = product,
-                            score = analysis.score.toFloat(),
-                            analysis = analysis,
-                            safetyStatus = safety.status,
-                            safetyReasoning = safety.reasoning
-                        )
-                    }
-                }.sortedByDescending { it.score }
-            } else {
-                //TODO ("fallback")
-                Log.d("Recommendations", "Analyses is empty")
-                emptyList()
-            }
-        }
-    }
+            allProducts.map { product ->
+                val analysis = analyses.find { it.barcode == product.code }
+                val safety = calculateLocalSafety(product, user)
 
-    private suspend fun enrichProduct(product: Product, user: UserContext): ScoredProduct {
-        val analysis = aiRepo.getExistingAnalysis(product.code)
-        val safety = calculateLocalSafety(product, user)
-        
-        if (safety.status == LocalSafetyStatus.CRITICAL_DANGER) {
-            return ScoredProduct(product, 0f, analysis, safety.status, safety.reasoning)
-        }
+                val score = if (safety.status == LocalSafetyStatus.CRITICAL_DANGER) {
+                    0f
+                } else {
+                    analysis?.score?.toFloat() ?: calculateLocalHeuristicScore(product, user)
+                }
 
-        val score = analysis?.score?.toFloat() ?: calculateLocalHeuristicScore(product, user)
-        
-        return ScoredProduct(
-            product = product,
-            score = score,
-            analysis = analysis,
-            safetyStatus = safety.status,
-            safetyReasoning = safety.reasoning
-        )
+                ScoredProduct(
+                    product = product,
+                    score = score,
+                    analysis = analysis,
+                    safetyStatus = safety.status,
+                    safetyReasoning = safety.reasoning
+                )
+            }.sortedByDescending { it.score }
+        }
     }
 
     fun calculateLocalSafety(product: Product, user: UserContext): LocalSafetyResult {
         if (user.allergies.isEmpty()) return LocalSafetyResult(LocalSafetyStatus.SAFE, 100f)
 
-        val ingredients = product.ingredientsText?.lowercase() ?: ""
-        val detected = user.allergies.filter { allergy ->
-            val query = allergy.trim().lowercase()
-            if (query.isBlank()) false else Regex("\\b${Regex.escape(query)}\\b").containsMatchIn(ingredients)
-        }
+        val ingredients = product.ingredientsText?.lowercase().orEmpty()
+        
+        val detected = user.allergies
+            .map { it.trim().lowercase() }
+            .filter { it.isNotBlank() }
+            .filter { query ->
+                Regex("\\b${Regex.escape(query)}\\b").containsMatchIn(ingredients)
+            }
 
         return if (detected.isNotEmpty()) {
             LocalSafetyResult(
