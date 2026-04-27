@@ -27,18 +27,6 @@ class LocalAiRepository(
     
     private val applicationContext = context.applicationContext
 
-    override suspend fun getValidProductsForAiScan(limit: Int): List<Product> {
-        return withContext(defaultDispatcher) {
-            val analyzedBarcodes = analysisDao.getAnalyzedBarcodes()
-            val excluded = analyzedBarcodes.ifEmpty { listOf("") }
-            val candidates = productDao.getScannableProducts(limit * 2, excluded)
-            candidates
-                .filter { it.code !in analyzedBarcodes }
-                .take(limit)
-                .map { it.toDomain() }
-        }
-    }
-
     override suspend fun getNextProductsForAi(lastBarcode: String, contextHash: Int, limit: Int): List<Product> {
         return withContext(defaultDispatcher) {
             val analyzedBarcodes = analysisDao.getAnalyzedBarcodesForContext(contextHash).toSet()

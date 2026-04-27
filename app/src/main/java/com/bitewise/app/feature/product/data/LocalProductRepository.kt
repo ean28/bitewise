@@ -5,6 +5,9 @@ import com.bitewise.app.feature.product.api.Product
 import com.bitewise.app.feature.product.api.ProductRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 open class LocalProductRepository(
@@ -49,12 +52,11 @@ open class LocalProductRepository(
         }
     }
 
-    override suspend fun getScannableProducts(limit: Int, excludedBarcodes: List<String>): List<Product> {
-        return withContext(defaultDispatcher) {
-            val excluded = excludedBarcodes.ifEmpty { listOf("") }
-            val results = dao.getScannableProducts(limit, excluded)
-            Log.d(REPO_TAG, "Fetched ${results.size} scannable items")
-            results.map { it.toDomain() }
-        }
+    override fun getScannableProductsFlow(): Flow<List<Product>> {
+        return dao.getAllScannableProductsFlow()
+            .map { entities ->
+                entities.map { it.toDomain() }
+            }
+            .flowOn(defaultDispatcher)
     }
 }
