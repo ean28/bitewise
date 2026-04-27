@@ -2,6 +2,7 @@ package com.bitewise.app.feature.ai.data
 
 import com.bitewise.app.domain.user.models.UserContext
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 
 object AiTokenEstimator {
     private const val CHARS_PER_TOKEN = 4
@@ -24,7 +25,7 @@ object AiTokenEstimator {
                 activity = it.activity,
                 conditions = it.conditions,
                 allergies = it.allergies,
-                diet = it.dietType
+                diet = it.dietary.joinToString()
             )
             try {
                 json.encodeToString(payload).length

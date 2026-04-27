@@ -12,7 +12,9 @@ import kotlinx.serialization.json.Json
 
 class GeminiService(private val systemInstruction: String) {
 
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     private val config = generationConfig {
         temperature = AiConfiguration.TEMPERATURE

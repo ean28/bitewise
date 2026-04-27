@@ -5,13 +5,12 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import com.bitewise.app.BiteWiseApplication
-import com.bitewise.app.R
 import com.bitewise.app.core.BaseFragment
 import com.bitewise.app.core.ViewModelFactory
 import com.bitewise.app.databinding.FragmentAiSyncBinding
@@ -57,14 +56,19 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
             findNavController().popBackStack()
         }
 
-        binding.sliderBatchSize.addOnChangeListener { _, value, _ ->
-            viewModel.setBatchSize(value.toInt())
+
+        binding.sliderBatchSize.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                viewModel.setBatchSize(value.toInt())
+            }
             binding.txtBatchSizeLabel.text = "AI Batch Size: ${value.toInt()}"
             binding.btnStartSync.text = "Full Sync (${value.toInt()})"
         }
 
-        binding.sliderQuickSyncLimit.addOnChangeListener { _, value, _ ->
-            viewModel.setQuickSyncLimit(value.toInt())
+        binding.sliderQuickSyncLimit.addOnChangeListener { _, value, fromUser ->
+            if(fromUser){
+                viewModel.setQuickSyncLimit(value.toInt())
+            }
             binding.txtQuickSyncLabel.text = "Quick Sync Limit: ${value.toInt()}"
             binding.btnQuickSync.text = "Quick Sync (${value.toInt()})"
         }
@@ -118,76 +122,117 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
 
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.uiState.collectLatest { state ->
-                        binding.txtFreshCount.text = state.freshCount.toString()
-                        binding.txtStaleCount.text = state.staleCount.toString()
-                        binding.txtEstTokens.text = "~${(state.estTokensPerBatch)}"
-                        binding.txtEstDuration.text = "${state.estDurationSeconds}s"
-                        binding.txtNeedAnalysisCount.text = state.needAnalysis.toString()
-                    }
+            viewModel.uiState
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { state ->
+                    binding.txtFreshCount.text = state.freshCount.toString()
+                    binding.txtStaleCount.text = state.staleCount.toString()
+                    binding.txtEstTokens.text = "~${(state.estTokensPerBatch)}"
+                    binding.txtEstDuration.text = "${state.estDurationSeconds}s"
+                    binding.txtNeedAnalysisCount.text = state.needAnalysis.toString()
                 }
+        }
 
-                launch {
-                    viewModel.isUserComplete.collectLatest { isComplete ->
-                        updateActionButtonsState(isComplete)
-                        
-                        if (!isComplete) {
-                            binding.cardDebugInfo.visibility = View.VISIBLE
-                            binding.txtDebugReason.text = "Reason: User profile is incomplete (Age, Weight, Height, and Activity are required)."
-                        } else {
-                            binding.cardDebugInfo.visibility = View.GONE
-                        }
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.maxSliderValue
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { maxValue ->
+                binding.sliderBatchSize.valueFrom = 0.0f
+
+                val safeMax = maxValue.toFloat().coerceAtLeast(1.0f)
+
+                if (binding.sliderBatchSize.value > safeMax) {
+                    binding.sliderBatchSize.value = safeMax
                 }
+                binding.sliderBatchSize.valueTo = safeMax
 
-                launch {
-                    viewModel.hasInterruptedSync.collectLatest { hasInterrupted ->
-                        binding.cardResumePrompt.visibility = if (hasInterrupted) View.VISIBLE else View.GONE
+                // Disable slider if there's no range to slide
+                binding.sliderBatchSize.isEnabled = safeMax > binding.sliderBatchSize.valueFrom
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.batchSize
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { size ->
+                    val floatSize = size.toFloat()
+                    val currentFrom = binding.sliderBatchSize.valueFrom
+                    val currentTo = binding.sliderBatchSize.valueTo
+
+                    // Coerce the value to be within the valid range of the slider
+                    if (binding.sliderBatchSize.value != floatSize) {
+                        binding.sliderBatchSize.value = floatSize.coerceIn(currentFrom, currentTo)
                     }
+                    binding.txtBatchSizeLabel.text = "AI Batch Size: $size"
+                    binding.btnStartSync.text = "Full Sync ($size)"
                 }
+        }
 
-                launch {
-                    viewModel.syncLogs.collectLatest { logs ->
-                        logAdapter.submitList(logs)
-                    }
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isUserComplete
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { isComplete ->
+                updateActionButtonsState(isComplete)
 
-                launch {
-                    viewModel.workInfos.collectLatest { infos ->
-                        val active = infos.any { !it.state.isFinished }
-                        if (active) {
-                            binding.layoutProgress.visibility = View.VISIBLE
-                            binding.progressIndicator.isIndeterminate = true
-                            binding.btnStartSync.isEnabled = false
-                            binding.btnQuickSync.isEnabled = false
-                            binding.btnResumeSync.isEnabled = false
-                        } else {
-                            binding.layoutProgress.visibility = View.GONE
-                            updateActionButtonsState(viewModel.isUserComplete.value)
-                            
-                            val failed = infos.firstOrNull { it.state == WorkInfo.State.FAILED }
-                            if (failed != null) {
-                                binding.cardDebugInfo.visibility = View.VISIBLE
-                                binding.txtDebugReason.text = "Last Sync Failed. Check logs or network."
-                            }
-                        }
-                        
-                        val activeWork = infos.firstOrNull { !it.state.isFinished }
-                        activeWork?.progress?.let { progress ->
-                            val current = progress.getInt("progress", 0)
-                            val total = progress.getInt("total", 0)
-                            if (total > 0) {
-                                binding.progressIndicator.isIndeterminate = false
-                                binding.progressIndicator.progress = current
-                                binding.progressIndicator.max = total
-                                binding.txtProgressStatus.text = "Syncing: $current/$total"
-                            }
-                        }
-                    }
+                if (!isComplete) {
+                    binding.cardDebugInfo.visibility = View.VISIBLE
+                    binding.txtDebugReason.text = "Reason: User profile is incomplete (Age, Weight, Height, and Activity are required)."
+                } else {
+                    binding.cardDebugInfo.visibility = View.GONE
                 }
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.hasInterruptedSync
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { hasInterrupted ->
+                    binding.cardResumePrompt.visibility = if (hasInterrupted) View.VISIBLE else View.GONE
+                }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.syncLogs
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { logs ->
+                    logAdapter.submitList(logs)
+                }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.workInfos
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest {infos ->
+                    val active = infos.any { !it.state.isFinished }
+                    if (active) {
+                        binding.layoutProgress.visibility = View.VISIBLE
+                        binding.progressIndicator.isIndeterminate = true
+                        binding.btnStartSync.isEnabled = false
+                        binding.btnQuickSync.isEnabled = false
+                        binding.btnResumeSync.isEnabled = false
+                    } else {
+                        binding.layoutProgress.visibility = View.GONE
+                        updateActionButtonsState(viewModel.isUserComplete.value)
+
+                        val failed = infos.firstOrNull { it.state == WorkInfo.State.FAILED }
+                        if (failed != null) {
+                            binding.cardDebugInfo.visibility = View.VISIBLE
+                            binding.txtDebugReason.text = "Last Sync Failed. Check logs or network."
+                        }
+                    }
+
+                    val activeWork = infos.firstOrNull { !it.state.isFinished }
+                    activeWork?.progress?.let { progress ->
+                        val current = progress.getInt("progress", 0)
+                        val total = progress.getInt("total", 0)
+                        if (total > 0) {
+                            binding.progressIndicator.isIndeterminate = false
+                            binding.progressIndicator.progress = current
+                            binding.progressIndicator.max = total
+                            binding.txtProgressStatus.text = "Syncing: $current/$total"
+                        }
+                    }
+                }
         }
     }
 

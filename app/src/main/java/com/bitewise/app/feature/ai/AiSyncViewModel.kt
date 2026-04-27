@@ -24,8 +24,11 @@ class AiSyncViewModel(
 
     private val prefs = context.applicationContext.getSharedPreferences(AiConfiguration.PREFS_NAME, Context.MODE_PRIVATE)
 
-    private val _batchSize = MutableStateFlow(prefs.getInt(AiConfiguration.KEY_BATCH_SIZE, AiConfiguration.DEFAULT_BATCH_SIZE))
+    private val _batchSize = MutableStateFlow(prefs.getInt(AiConfiguration.KEY_BATCH_SIZE, 80))
     val batchSize: StateFlow<Int> = _batchSize.asStateFlow()
+
+    private val _maxSliderValue = MutableStateFlow(80)
+    val maxSliderValue: StateFlow<Int> = _maxSliderValue.asStateFlow()
 
     private val _quickSyncLimit = MutableStateFlow(prefs.getInt("ai_quick_sync_limit", 10))
 
@@ -37,14 +40,12 @@ class AiSyncViewModel(
 
     val workInfos: StateFlow<List<WorkInfo>> = workManager.getWorkInfosByTagFlow("AiSync")
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val uiState: StateFlow<SyncPreFlightState> = combine(
         aiRepository.getAnalyzedCountFlow(),
         userRepository.getUserContext(),
         _batchSize
-    ) { _, user, currentBatchSize -> 
-        user to currentBatchSize
-    }
-    .map { (user, currentBatchSize) ->
+    ) { _, user, currentBatchSize ->
         if (user == null || !user.isComplete()) {
             SyncPreFlightState()
         } else {
@@ -52,9 +53,10 @@ class AiSyncViewModel(
             val stale = aiRepository.getStaleItemCount(hash)
             val needingSync = aiRepository.getItemsNeedingSyncCount(hash)
             val fresh = aiRepository.getFreshItemCount(hash)
-            
+
             val totalToProcess = stale + needingSync
-            
+            val maxVal = totalToProcess.coerceAtLeast(80)
+
             SyncPreFlightState(
                 freshCount = fresh,
                 staleCount = stale,
@@ -62,7 +64,7 @@ class AiSyncViewModel(
                 estTokensPerBatch = AiTokenEstimator.estimateSingleBatchTokens(currentBatchSize, user),
                 totalEstTokens = AiTokenEstimator.estimateTotalSyncTokens(totalToProcess, currentBatchSize, user),
                 estDurationSeconds = AiTokenEstimator.estimateDurationSeconds(totalToProcess, currentBatchSize),
-                maxBatchSize = needingSync.coerceAtLeast(AiConfiguration.MIN_BATCH_SIZE)
+                maxBatchSize = maxVal
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SyncPreFlightState())
@@ -73,6 +75,7 @@ class AiSyncViewModel(
 
     init {
         observeSettings()
+        observeUiState()
     }
 
     private fun observeSettings() {
@@ -88,8 +91,25 @@ class AiSyncViewModel(
         }
     }
 
+    private fun observeUiState() {
+        viewModelScope.launch {
+            uiState.collectLatest { state ->
+                _maxSliderValue.value = state.maxBatchSize
+                if (_batchSize.value > state.maxBatchSize) {
+                    _batchSize.value = state.maxBatchSize
+                }
+            }
+        }
+    }
+
     fun setBatchSize(size: Int) {
-        _batchSize.value = size
+        val max = _maxSliderValue.value
+
+        val snappedValue = when {
+            size >= max -> max
+            else -> (size / 10) * 10
+        }
+        _batchSize.value = snappedValue.coerceIn(80, max.coerceAtLeast(80))
     }
 
     fun setQuickSyncLimit(limit: Int) {
@@ -98,12 +118,12 @@ class AiSyncViewModel(
 
     fun startSync(isQuick: Boolean = false) {
         if (!isUserComplete.value) return
-        
+
         if (!hasInterruptedSync.value) {
             prefs.edit { remove(AiConfiguration.KEY_LAST_BARCODE) }
         }
-        
-        val limit = if (isQuick) _quickSyncLimit.value else null
+
+        val limit = if (isQuick) _quickSyncLimit.value else _batchSize.value
         aiRepository.triggerSync(limit)
         _hasInterruptedSync.value = false
     }
@@ -128,7 +148,7 @@ class AiSyncViewModel(
             user?.let {
                 Log.d("AiSyncViewModel", "Forcing refresh of cache for hash: ${it.hashCode()}")
                 aiRepository.forceRefreshCache(it.hashCode())
-                
+
                 _hasInterruptedSync.value = false
                 prefs.edit { remove(AiConfiguration.KEY_LAST_BARCODE) }
             }
