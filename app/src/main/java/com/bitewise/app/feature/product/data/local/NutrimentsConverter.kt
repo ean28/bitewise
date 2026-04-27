@@ -5,24 +5,30 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
 class NutrimentsConverter {
+    
     private val json = Json {
         ignoreUnknownKeys = true
-        isLenient = true
+        encodeDefaults = true
+        coerceInputValues = true
     }
 
     @TypeConverter
     fun fromJson(value: String?): Map<String, JsonElement>? {
-        return value?.let {
-            try {
-                json.decodeFromString<Map<String, JsonElement>>(it)
-            } catch(e: Exception){
-                null
-            }
+        if (value.isNullOrBlank()) return null
+        return try {
+            json.decodeFromString<Map<String, JsonElement>>(value)
+        } catch (e: Exception) {
+            null
         }
     }
 
     @TypeConverter
     fun toJson(map: Map<String, JsonElement>?): String? {
-        return map?.let{ json.encodeToString(it)}
+        if (map == null) return null
+        return try {
+            json.encodeToString(map)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

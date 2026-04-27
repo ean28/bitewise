@@ -40,6 +40,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
         setupMultiSelects()
         setupListeners()
         observeData()
+    // TODO("ADD UI STATES")
     }
 
     private fun setupViewModel() {
@@ -108,9 +109,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
             val itemsToAdd = fullText.split(",").map { it.trim() }.filter { it.isNotEmpty() }
             
             var changed = false
-            itemsToAdd.forEach { item ->
-                if (!selectedList.contains(item)) {
-                    selectedList.add(item)
+            itemsToAdd.forEach { value ->
+                if (selectedList.none { it == value }) {
+                    selectedList.add(value)
                     changed = true
                 }
             }
@@ -131,20 +132,20 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
             val emptyChip = Chip(requireContext()).apply {
                 text = "None"
                 isEnabled = false
-                chipBackgroundColor = android.content.res.ColorStateList.valueOf(0x10000000)
+                setChipBackgroundColorResource(R.color.chip_background_empty)
             }
             chipGroup.addView(emptyChip)
             return
         }
 
-        selectedList.forEach { text ->
+        selectedList.forEach { value ->
             val chip = Chip(requireContext()).apply {
-                this.text = text
+                this.text = value
                 isCloseIconVisible = true
-                chipBackgroundColor = android.content.res.ColorStateList.valueOf(0xFFE8F5E9.toInt())
-                closeIconTint = android.content.res.ColorStateList.valueOf(0xFF66BB6A.toInt())
+                setChipBackgroundColorResource(R.color.chip_background_selected)
+                setCloseIconTintResource(R.color.chip_close_icon_tint)
                 setOnCloseIconClickListener {
-                    selectedList.remove(text)
+                    selectedList.remove(value)
                     refreshChips(chipGroup, selectedList)
                 }
             }
