@@ -6,6 +6,9 @@ import com.bitewise.app.domain.settings.SettingsRepository
 import com.bitewise.app.domain.user.models.UserContext
 import com.bitewise.app.domain.user.repository.UserRepository
 import com.bitewise.app.feature.onboarding.domain.OnboardingData
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class OnboardingViewModel(
@@ -14,18 +17,12 @@ class OnboardingViewModel(
 ) : ViewModel() {
 
     val data = OnboardingData()
+    private val _onboardingCompleted = MutableSharedFlow<Unit>()
+    val onboardingCompleted: SharedFlow<Unit> = _onboardingCompleted.asSharedFlow()
 
     fun isPhysicalValid(): Boolean {
-        return true
+        return data.age != null && data.weight != null && data.height != null
     }
-
-//    fun isLifestyleValid(): Boolean {
-//        return true
-//    }
-//
-//    fun isHealthValid(): Boolean {
-//        return true
-//    }
 
     fun completeOnboarding() {
         viewModelScope.launch {
@@ -40,6 +37,7 @@ class OnboardingViewModel(
             )
             userRepository.saveUserContext(userContext)
             settingsRepository.setOnboardingDone(true)
+            _onboardingCompleted.emit(Unit)
         }
     }
 }

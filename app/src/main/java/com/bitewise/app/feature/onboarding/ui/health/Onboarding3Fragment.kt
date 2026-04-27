@@ -6,6 +6,9 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.MultiAutoCompleteTextView
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.MainActivity
 import com.bitewise.app.core.BaseFragment
@@ -16,6 +19,8 @@ import com.bitewise.app.feature.onboarding.OnboardingViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
     Onboarding3Binding::inflate
@@ -59,12 +64,22 @@ class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
 
         binding.btnNext.setOnClickListener {
             viewModel.completeOnboarding()
-            finishOnboarding()
         }
 
         binding.btnSkip.setOnClickListener {
             viewModel.completeOnboarding()
-            finishOnboarding()
+        }
+
+        observeNavigation()
+    }
+
+    private fun observeNavigation() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.onboardingCompleted.collectLatest {
+                    finishOnboarding()
+                }
+            }
         }
     }
 
@@ -86,10 +101,10 @@ class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
             val itemsToAdd = fullText.split(",").map { it.trim() }.filter { it.isNotEmpty() }
             
             var changed = false
-            itemsToAdd.forEach { item ->
-                if (!selectedList.contains(item)) {
-                    selectedList.add(item)
-                    addChipToGroup(chipGroup, item, selectedList, onUpdate)
+            itemsToAdd.forEach { value ->
+                if (selectedList.none { it.equals(value, ignoreCase = true) }) {
+                    selectedList.add(value)
+                    addChipToGroup(chipGroup, value, selectedList, onUpdate)
                     changed = true
                 }
             }
@@ -112,16 +127,16 @@ class Onboarding3Fragment : BaseFragment<Onboarding3Binding>(
 
     private fun addChipToGroup(
         chipGroup: ChipGroup,
-        text: String,
+        value: String,
         selectedList: MutableList<String>,
         onUpdate: (List<String>) -> Unit
     ) {
         val chip = Chip(requireContext()).apply {
-            this.text = text
+            this.text = value
             isCloseIconVisible = true
             setOnCloseIconClickListener {
                 chipGroup.removeView(this)
-                selectedList.remove(text)
+                selectedList.remove(value)
                 onUpdate(selectedList)
             }
         }
