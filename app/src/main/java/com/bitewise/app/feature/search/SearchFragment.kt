@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.databinding.FragmentSearchScreenBinding
 import com.bitewise.app.core.BaseFragment
+import com.bitewise.app.core.Constants
 import com.bitewise.app.core.UiState
 import com.bitewise.app.core.ViewModelFactory
 import com.bitewise.app.feature.search.ui.SearchTileAdapter
@@ -32,6 +34,7 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
         setupViewModel()
         saveRecentProductClickToRecent()
         setupRecyclerView()
+        setupListeners()
         observeData()
     }
 
@@ -55,7 +58,7 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
         }
 
         val phFlag = CountryList.COUNTRIES.first {
-            it.name == "Philippines"
+            it.name == Constants.DEFAULT_COUNTRY
         }.flag
 
         binding.countryDropdown.setText(
@@ -81,10 +84,16 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
         }
     }
 
+    private fun setupListeners() {
+        binding.searchInput.addTextChangedListener { text ->
+            viewModel.onSearchQueryChanged(text?.toString() ?: "")
+        }
+    }
+
     private fun saveRecentProductClickToRecent() {
         adapter = SearchTileAdapter { selectedProduct : SearchTileUiState ->
             val bundle = Bundle().apply {
-                putString("arg_barcode", selectedProduct.product.code)
+                putString(Constants.ARG_BARCODE, selectedProduct.product.code)
             }
 
             findNavController().navigate(
@@ -113,7 +122,6 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
             }
         }
     }
-
     private fun filterResultsByCountry(countryName: String) {
         // TODO: implement filtering logic
     }

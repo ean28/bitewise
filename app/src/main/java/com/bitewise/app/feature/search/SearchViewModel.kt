@@ -1,5 +1,8 @@
 package com.bitewise.app.feature.search
 
+import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bitewise.app.feature.product.api.Product
@@ -8,13 +11,14 @@ import com.bitewise.app.core.UiState
 import com.bitewise.app.core.ui.GradeManager
 import com.bitewise.app.feature.ai.api.AiRepository
 import com.bitewise.app.feature.ai.data.local.AiAnalysisEntity
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 data class SearchTileUiState(
     val product: Product,
-    val code: String? = null,
+    val code: String,
     val name: String,
     val imageUrl: String?,
     val nutriGradeRes: Int,
@@ -38,21 +42,23 @@ class SearchViewModel(
         observeSearchQuery()
     }
 
+    @OptIn(FlowPreview::class)
     fun observeSearchQuery() {
         viewModelScope.launch {
-            _searchQuery.collectLatest { query ->
-                if (query.isNotBlank()) {
-                    delay(300)
-                }
-                performSearch(query)
+            _searchQuery
+                .debounce(300)
+                .collectLatest { query ->
+                    performSearch(query)
             }
         }
     }
 
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
+
     fun fetchAllProducts() {
-        viewModelScope.launch {
-            performSearch("")
-        }
+        onSearchQueryChanged("")
     }
 
     private suspend fun performSearch(query: String) {
@@ -63,16 +69,19 @@ class SearchViewModel(
             } else {
                 repository.searchProducts(query)
             }
-            
-            aiRepository.getAllAnalyses().collect { analyses ->
-                val analysisMap = analyses.associateBy { it.barcode }
-                val uiStates = products.map { product ->
-                    product.toUiState(analysisMap[product.code])
-                }
-                _searchState.value = UiState.Success(uiStates)
+
+            val analyses = aiRepository.getAllAnalyses().first()
+            val analysisMap = analyses.associateBy { it.barcode }
+            val uiStates = products.map {
+                it.toUiState(analysisMap[it.code])
             }
+            _searchState.value = UiState.Success(uiStates)
+
         } catch (e: Exception) {
-            _searchState.value = UiState.Error(e.message ?: "Search failed")
+            if (e is CancellationException) throw e
+            _searchState.value = UiState.Error(e.message ?: "Something went wrong")
+
+            Log.e("SearchViewModel", "Error during search", e)
         }
     }
 
@@ -84,7 +93,7 @@ class SearchViewModel(
             imageUrl = imageUrl,
             nutriGradeRes = GradeManager.getNutriDrawable(productScores?.nutritionGrade),
             novaGradeRes = GradeManager.getNovaDrawable(productScores?.novaGroup),
-            ecoGradeRes = GradeManager.getEcoDrawable(null),
+            ecoGradeRes = GradeManager.getEcoDrawable(productScores?.ecoScoreGrade),
             aiScore = analysis?.score?.toInt()?.toString(),
             showAiScore = analysis != null
         )
