@@ -18,7 +18,7 @@ import com.bitewise.app.feature.product.ui.adapter.rows.containers.SecondContain
 import com.bitewise.app.feature.product.ui.adapter.rows.containers.ThirdContainerViewHolder
 
 class ProductInformationAdapter(
-    private val rows: List<ProductRowManager>,
+    private var rows: List<ProductRowManager>,
     private val onContainerClick: ((ProductRowManager) -> Unit)? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -102,4 +102,9 @@ class ProductInformationAdapter(
     }
 
     override fun getItemCount(): Int = rows.size
+
+    fun updateRows(newRows: List<ProductRowManager>){
+        rows = newRows
+        notifyDataSetChanged()
+    }
 }

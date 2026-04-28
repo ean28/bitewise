@@ -15,7 +15,8 @@ import com.bitewise.app.core.BaseFragment
 import com.bitewise.app.core.ViewModelFactory
 import com.bitewise.app.databinding.FragmentAiSyncBinding
 import com.bitewise.app.feature.ai.ui.SyncLogAdapter
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
@@ -124,19 +125,20 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { state ->
+                .onEach { state ->
                     binding.txtFreshCount.text = state.freshCount.toString()
                     binding.txtStaleCount.text = state.staleCount.toString()
                     binding.txtEstTokens.text = "~${(state.estTokensPerBatch)}"
                     binding.txtEstDuration.text = "${state.estDurationSeconds}s"
                     binding.txtNeedAnalysisCount.text = state.needAnalysis.toString()
                 }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.maxSliderValue
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { maxValue ->
+                .onEach { maxValue ->
                 binding.sliderBatchSize.valueFrom = 0.0f
 
                 val safeMax = maxValue.toFloat().coerceAtLeast(1.0f)
@@ -148,13 +150,14 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
 
                 // Disable slider if there's no range to slide
                 binding.sliderBatchSize.isEnabled = safeMax > binding.sliderBatchSize.valueFrom
-            }
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.batchSize
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { size ->
+                .onEach { size ->
                     val floatSize = size.toFloat()
                     val currentFrom = binding.sliderBatchSize.valueFrom
                     val currentTo = binding.sliderBatchSize.valueTo
@@ -166,12 +169,13 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
                     binding.txtBatchSizeLabel.text = "AI Batch Size: $size"
                     binding.btnStartSync.text = "Full Sync ($size)"
                 }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isUserComplete
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { isComplete ->
+                .onEach { isComplete ->
                 updateActionButtonsState(isComplete)
 
                 if (!isComplete) {
@@ -181,28 +185,31 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
                     binding.cardDebugInfo.visibility = View.GONE
                 }
             }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.hasInterruptedSync
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { hasInterrupted ->
+                .onEach { hasInterrupted ->
                     binding.cardResumePrompt.visibility = if (hasInterrupted) View.VISIBLE else View.GONE
                 }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.syncLogs
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { logs ->
+                .onEach { logs ->
                     logAdapter.submitList(logs)
                 }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.workInfos
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest {infos ->
+                .onEach {infos ->
                     val active = infos.any { !it.state.isFinished }
                     if (active) {
                         binding.layoutProgress.visibility = View.VISIBLE
@@ -233,6 +240,7 @@ class AiSyncFragment : BaseFragment<FragmentAiSyncBinding>(
                         }
                     }
                 }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 

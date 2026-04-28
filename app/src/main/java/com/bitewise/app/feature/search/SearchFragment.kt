@@ -5,7 +5,9 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,7 +20,8 @@ import com.bitewise.app.core.ViewModelFactory
 import com.bitewise.app.feature.search.ui.SearchTileAdapter
 import com.bitewise.app.feature.search.ui.CountryList
 import com.bitewise.app.feature.search.ui.setupCountryPicker
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
@@ -105,7 +108,9 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
 
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.searchState.collectLatest { state ->
+            viewModel.searchState
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .onEach { state ->
                 when (state) {
                     is UiState.Loading -> {
                         // TODO: show loading indicator
@@ -120,6 +125,7 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
                     }
                 }
             }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
     private fun filterResultsByCountry(countryName: String) {

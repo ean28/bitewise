@@ -10,7 +10,7 @@ import com.bitewise.app.feature.ai.data.local.AiSyncLog
 import com.bitewise.app.feature.ai.data.AiSyncLogDAO
 import com.bitewise.app.feature.user.data.local.UserEntity
 
-@Database(entities = [UserEntity::class, AiAnalysisEntity::class, AiSyncLog::class], version = 6, exportSchema = false)
+@Database(entities = [UserEntity::class, AiAnalysisEntity::class, AiSyncLog::class], version = 7, exportSchema = false)
 abstract class UserDatabase : RoomDatabase() {
     abstract fun userProfileDao(): UserProfileDAO
     abstract fun aiAnalysisDao(): AiAnalysisDAO

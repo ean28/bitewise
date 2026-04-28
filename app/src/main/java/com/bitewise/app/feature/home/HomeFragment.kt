@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bitewise.app.BiteWiseApplication
@@ -17,8 +17,8 @@ import com.bitewise.app.core.UiState
 import com.bitewise.app.core.ViewModelFactory
 import com.bitewise.app.feature.home.ui.HorizontalTileAdapter
 import com.bitewise.app.feature.home.ui.VerticalRecommendationAdapter
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
     FragmentHomeScreenBinding::inflate
@@ -33,7 +33,6 @@ class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
         setupRecyclerViews()
         setupListeners()
         observeData()
-        //TODO: Create pulldown refresh fun
     }
 
     override fun onResume() {
@@ -91,39 +90,43 @@ class HomeFragment : BaseFragment<FragmentHomeScreenBinding>(
     }
 
     private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.recentProducts.collectLatest { products ->
-                        recentAdapter.setItems(products)
-                    }
-                }
-                launch {
-                    viewModel.recommendedProducts.collectLatest { state ->
-                        if (state is UiState.Success) {
-                            recommendationAdapter.setItems(state.data)
-                            binding.txtRecommendationCount.text = "(${state.data.size} items)"
-                        }
-                    }
-                }
-                launch {
-                    viewModel.userContext.collectLatest { user ->
-                        binding.txtStatusContent.text = if (user != null) "Active Profile" else "Setup Required"
-                    }
-                }
-                launch {
-                    viewModel.suggestionText.collectLatest { suggestion ->
-                        binding.txtSuggestionContent.text = suggestion
-                    }
-                }
-                launch {
-                    viewModel.showSyncPrompt.collectLatest { show ->
-                        binding.cardSyncPrompt.visibility = if (show) View.VISIBLE else View.GONE
-                        // Show the small sync button if the prompt is hidden but user hasn't synced
-                        binding.btnRecommendationSync.visibility = if (!show && viewModel.isSyncPromptDismissed.value) View.VISIBLE else View.GONE
-                    }
+        viewModel.recentProducts
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { products ->
+                recentAdapter.setItems(products)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.recommendedProducts
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                if (state is UiState.Success) {
+                    recommendationAdapter.setItems(state.data)
+                    binding.txtRecommendationCount.text = "(${state.data.size} items)"
                 }
             }
-        }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.userContext
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { user ->
+                binding.txtStatusContent.text = if (user != null) "Active Profile" else "Setup Required"
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.suggestionText
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { suggestion ->
+                binding.txtSuggestionContent.text = suggestion
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showSyncPrompt
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { show ->
+                binding.cardSyncPrompt.visibility = if (show) View.VISIBLE else View.GONE
+                binding.btnRecommendationSync.visibility = if (!show && viewModel.isSyncPromptDismissed.value) View.VISIBLE else View.GONE
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

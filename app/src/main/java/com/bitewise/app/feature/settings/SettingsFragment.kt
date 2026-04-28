@@ -7,8 +7,8 @@ import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bitewise.app.BiteWiseApplication
 import com.bitewise.app.R
@@ -20,7 +20,8 @@ import com.bitewise.app.domain.user.models.UserContext
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
@@ -180,18 +181,25 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
 
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userContext.collectLatest { user ->
+            viewModel.userContext
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .onEach { user ->
                     user?.let {
-                        binding.editAge.setText(if (it.age > 0) it.age.toString() else "")
+                        binding.editAge.setText(
+                            if (it.age > 0)
+                                it.age.toString()
+                            else
+                                ""
+                        )
                         binding.editWeight.setText(if (it.weight > 0.0) it.weight.toString() else "")
                         binding.editHeight.setText(if (it.height > 0.0) it.height.toString() else "")
-                        
+
                         // Activity Level
                         selectedActivityLevel = it.activity
                         if (selectedActivityLevel.isNotBlank()) {
                             binding.spinnerActivity.setText(selectedActivityLevel, false)
-                            binding.txtActivityDesc.text = UserConstants.ACTIVITY_LEVELS[selectedActivityLevel]
+                            binding.txtActivityDesc.text =
+                                UserConstants.ACTIVITY_LEVELS[selectedActivityLevel]
                         }
 
                         // Health & Dietary
@@ -206,14 +214,14 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
                         selectedConditions.clear()
                         selectedConditions.addAll(it.conditions)
                         refreshChips(binding.chipGroupConditions, selectedConditions)
-                        
+
                         binding.txtDebugHash.text = "Context Hash: ${it.hashCode()}"
                         if (!it.isComplete()) {
                             binding.txtDebugHash.append("\n⚠️ PROFILE INCOMPLETE FOR AI SYNC")
                         }
                     }
                 }
-            }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 }
