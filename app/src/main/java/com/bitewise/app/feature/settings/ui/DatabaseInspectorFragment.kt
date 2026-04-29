@@ -55,12 +55,11 @@ class DatabaseInspectorFragment : BaseFragment<FragmentDatabaseInspectorBinding>
     }
 
     private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.userContext
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .onEach { user ->
-                    binding.txtUserProfileData.text = user?.let {
-                        """
+        viewModel.userContext
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { user ->
+                binding.txtUserProfileData.text = user?.let {
+                    """
                     Age: ${it.age}
                     Weight: ${it.weight}
                     Height: ${it.height}
@@ -70,16 +69,15 @@ class DatabaseInspectorFragment : BaseFragment<FragmentDatabaseInspectorBinding>
                     Conditions: ${it.conditions}
                     Hash: ${it.hashCode()}
                     """.trimIndent()
-                    } ?: "No User Profile Data Found"
-                }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
+                } ?: "No User Profile Data Found"
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
-            viewModel.aiAnalyses
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .onEach { analyses ->
-                    adapter.submitList(analyses)
-                }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
-        }
+        viewModel.aiAnalyses
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { analyses ->
+                adapter.submitList(analyses)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

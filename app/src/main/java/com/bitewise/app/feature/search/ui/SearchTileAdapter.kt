@@ -17,18 +17,24 @@ class SearchTileAdapter(
         private val binding: ItemTileSearchItemsBinding,
         private val onItemClick: (SearchTileUiState) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        
+
+        private var currentItem: SearchTileUiState? = null
+
+        init {
+            binding.root.setOnClickListener {
+                currentItem?.let(onItemClick)
+            }
+        }
+
         fun bind(uiState: SearchTileUiState) {
+            currentItem = uiState
+
             binding.txtSearchTileName.text = uiState.name
             binding.imgSearchTile.loadImage(uiState.imageUrl)
 
             binding.lblSearchNutriscore.setImageResource(uiState.nutriGradeRes)
             binding.lblSearchNovascore.setImageResource(uiState.novaGradeRes)
             binding.lblSearchGreenscore.setImageResource(uiState.ecoGradeRes)
-
-            binding.root.setOnClickListener {
-                onItemClick(uiState)
-            }
         }
     }
 

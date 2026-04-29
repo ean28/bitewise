@@ -180,48 +180,46 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(
     }
 
     private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.userContext
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .onEach { user ->
-                    user?.let {
-                        binding.editAge.setText(
-                            if (it.age > 0)
-                                it.age.toString()
-                            else
-                                ""
-                        )
-                        binding.editWeight.setText(if (it.weight > 0.0) it.weight.toString() else "")
-                        binding.editHeight.setText(if (it.height > 0.0) it.height.toString() else "")
+        viewModel.userContext
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { user ->
+                user?.let {
+                    binding.editAge.setText(
+                        if (it.age > 0)
+                            it.age.toString()
+                        else
+                            ""
+                    )
+                    binding.editWeight.setText(if (it.weight > 0.0) it.weight.toString() else "")
+                    binding.editHeight.setText(if (it.height > 0.0) it.height.toString() else "")
 
-                        // Activity Level
-                        selectedActivityLevel = it.activity
-                        if (selectedActivityLevel.isNotBlank()) {
-                            binding.spinnerActivity.setText(selectedActivityLevel, false)
-                            binding.txtActivityDesc.text =
-                                UserConstants.ACTIVITY_LEVELS[selectedActivityLevel]
-                        }
+                    // Activity Level
+                    selectedActivityLevel = it.activity
+                    if (selectedActivityLevel.isNotBlank()) {
+                        binding.spinnerActivity.setText(selectedActivityLevel, false)
+                        binding.txtActivityDesc.text =
+                            UserConstants.ACTIVITY_LEVELS[selectedActivityLevel]
+                    }
 
-                        // Health & Dietary
-                        selectedDiets.clear()
-                        selectedDiets.addAll(it.dietary)
-                        refreshChips(binding.chipGroupDiet, selectedDiets)
+                    // Health & Dietary
+                    selectedDiets.clear()
+                    selectedDiets.addAll(it.dietary)
+                    refreshChips(binding.chipGroupDiet, selectedDiets)
 
-                        selectedAllergies.clear()
-                        selectedAllergies.addAll(it.allergies)
-                        refreshChips(binding.chipGroupAllergies, selectedAllergies)
+                    selectedAllergies.clear()
+                    selectedAllergies.addAll(it.allergies)
+                    refreshChips(binding.chipGroupAllergies, selectedAllergies)
 
-                        selectedConditions.clear()
-                        selectedConditions.addAll(it.conditions)
-                        refreshChips(binding.chipGroupConditions, selectedConditions)
+                    selectedConditions.clear()
+                    selectedConditions.addAll(it.conditions)
+                    refreshChips(binding.chipGroupConditions, selectedConditions)
 
-                        binding.txtDebugHash.text = "Context Hash: ${it.hashCode()}"
-                        if (!it.isComplete()) {
-                            binding.txtDebugHash.append("\n⚠️ PROFILE INCOMPLETE FOR AI SYNC")
-                        }
+                    binding.txtDebugHash.text = "Context Hash: ${it.hashCode()}"
+                    if (!it.isComplete()) {
+                        binding.txtDebugHash.append("\n⚠️ PROFILE INCOMPLETE FOR AI SYNC")
                     }
                 }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
-        }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

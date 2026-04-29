@@ -1,411 +1,418 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp"
-    android:background="#F8F9FA">
+    android:fillViewport="true">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
-
-        <ImageButton
-            android:id="@+id/btn_back"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Go back"
-            android:padding="8dp"
-            android:src="?attr/homeAsUpIndicator" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="AI Sync"
-            android:textSize="24sp"
-            android:fontFamily="@font/inter_bold"
-            android:layout_marginStart="8dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_clear_cache"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Clear Cache"
-            android:textColor="#E53935"
-            app:icon="@drawable/ic_safety_shield"
-            app:iconTint="#E53935" />
-    </LinearLayout>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_debug_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="#FFCDD2"
-        app:cardBackgroundColor="#FFEBEE"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_marginBottom="16dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="12dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sync Debugger"
-                android:fontFamily="@font/inter_bold"
-                android:textColor="#C62828"
-                android:textSize="14sp" />
-            <TextView
-                android:id="@+id/txt_debug_reason"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reason: Profile Incomplete"
-                android:textSize="12sp"
-                android:textColor="#C62828"
-                android:layout_marginTop="4dp" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_resume_prompt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="#BBDEFB"
-        app:cardBackgroundColor="#E3F2FD"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_marginBottom="16dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Resume Interrupted Sync?"
-                android:fontFamily="@font/inter_bold"
-                android:textColor="#1976D2"
-                android:textSize="14sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A previous sync operation was interrupted. You can resume from where it left off or discard the progress."
-                android:textSize="12sp"
-                android:textColor="#1976D2"
-                android:layout_marginTop="4dp" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end"
-                android:layout_marginTop="12dp">
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_cancel_resume"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Discard Progress"
-                    android:textColor="#1976D2" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_resume_sync"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Resume Sync"
-                    android:layout_marginStart="8dp"
-                    app:icon="@drawable/ic_resume" />
-            </LinearLayout>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="#E0E0E0"
-        app:cardElevation="0dp"
-        android:layout_marginBottom="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sync Configuration"
-                android:fontFamily="@font/inter_bold"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:id="@+id/txt_batch_size_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sync Product Size: 100"
-                android:textSize="12sp"
-                android:layout_marginBottom="8dp" />
-
-            <!-- valueFrom set to 0.0 to avoid IllegalStateException when valueTo is set to 80.0 -->
-            <com.google.android.material.slider.Slider
-                android:id="@+id/slider_batch_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:value="100.0"
-                android:valueFrom="0.0"
-                android:valueTo="150.0"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:id="@+id/txt_quick_sync_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Quick Sync Size: 10"
-                android:textSize="12sp"
-                android:layout_marginBottom="8dp" />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/slider_quick_sync_limit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:valueFrom="5.0"
-                android:valueTo="15.0"
-                android:stepSize="1.0"
-                android:value="10.0"
-                android:layout_marginBottom="8dp" />
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="#E0E0E0"
-        app:cardElevation="0dp"
-        android:layout_marginBottom="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pre-Flight Status"
-                android:fontFamily="@font/inter_bold"
-                android:textSize="16sp"
-                android:layout_marginBottom="12dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="11.5sp"
-                    android:text="Analyzed Products:" />
-                <TextView
-                    android:id="@+id/txt_fresh_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:fontFamily="@font/inter_bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="11.5sp"
-
-                    android:text="Stale Items (Re-sync):" />
-                <TextView
-                    android:id="@+id/txt_stale_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textColor="#E53935"
-                    android:fontFamily="@font/inter_bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/tv_need_analysis"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="11.5sp"
-
-                    android:text="Need Analysis:" />
-                <TextView
-                    android:id="@+id/txt_need_analysis_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textColor="#D0CBA1"
-                    android:fontFamily="@font/inter_bold" />
-            </LinearLayout>
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#EEEEEE"
-                android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_need_analysis" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="11.5sp"
-                    android:text="Estimated Token Usage:" />
-                <TextView
-                    android:id="@+id/txt_est_tokens"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="~0"
-                    android:fontFamily="monospace" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="11.5sp"
-                    android:text="Estimated Duration:" />
-                <TextView
-                    android:id="@+id/txt_est_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0s"
-                    android:fontFamily="@font/inter_bold"/>
-            </LinearLayout>
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_quick_sync"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:text="Quick Sync (10)"
-            android:layout_marginEnd="8dp"
-            app:cornerRadius="12dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_start_sync"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:text="Full Sync (80)"
-            app:cornerRadius="12dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_marginBottom="16dp">
+        android:padding="20dp"
+        android:background="#F8F9FA">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="24dp">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Go back"
+                android:padding="8dp"
+                android:src="?attr/homeAsUpIndicator" />
+
             <TextView
-                android:id="@+id/txt_progress_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Syncing: 0/10"
-                android:textSize="12sp" />
+                android:text="AI Sync"
+                android:textSize="24sp"
+                android:fontFamily="@font/inter_bold"
+                android:layout_marginStart="8dp" />
+
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_stop_sync"
+                android:id="@+id/btn_clear_cache"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Stop Sync"
+                android:text="Clear Cache"
                 android:textColor="#E53935"
-                android:padding="0dp"
-                app:icon="@drawable/ic_close"
+                app:icon="@drawable/ic_safety_shield"
                 app:iconTint="#E53935" />
         </LinearLayout>
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progress_indicator"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_debug_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:trackThickness="8dp"
-            app:trackCornerRadius="4dp" />
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#FFCDD2"
+            app:cardBackgroundColor="#FFEBEE"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_marginBottom="16dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sync Debugger"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="#C62828"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/txt_debug_reason"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reason: Profile Incomplete"
+                    android:textSize="12sp"
+                    android:textColor="#C62828"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_resume_prompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#BBDEFB"
+            app:cardBackgroundColor="#E3F2FD"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_marginBottom="16dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Resume Interrupted Sync?"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="#1976D2"
+                    android:textSize="14sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="A previous sync operation was interrupted. You can resume from where it left off or discard the progress."
+                    android:textSize="12sp"
+                    android:textColor="#1976D2"
+                    android:layout_marginTop="4dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_marginTop="12dp">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_cancel_resume"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Discard Progress"
+                        android:textColor="#1976D2" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_resume_sync"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Resume Sync"
+                        android:layout_marginStart="8dp"
+                        app:icon="@drawable/ic_resume" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#E0E0E0"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sync Configuration"
+                    android:fontFamily="@font/inter_bold"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/txt_batch_size_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sync Product Size: 100"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- valueFrom set to 0.0 to avoid IllegalStateException when valueTo is set to 80.0 -->
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_batch_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:value="100.0"
+                    android:valueFrom="0.0"
+                    android:valueTo="150.0"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/txt_quick_sync_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quick Sync Size: 10"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_quick_sync_limit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="5.0"
+                    android:valueTo="15.0"
+                    android:stepSize="1.0"
+                    android:value="10.0"
+                    android:layout_marginBottom="8dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#E0E0E0"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pre-Flight Status"
+                    android:fontFamily="@font/inter_bold"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="11.5sp"
+                        android:text="Analyzed Products:" />
+                    <TextView
+                        android:id="@+id/txt_fresh_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:fontFamily="@font/inter_bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="11.5sp"
+
+                        android:text="Stale Items (Re-sync):" />
+                    <TextView
+                        android:id="@+id/txt_stale_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#E53935"
+                        android:fontFamily="@font/inter_bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tv_need_analysis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="11.5sp"
+
+                        android:text="Need Analysis:" />
+                    <TextView
+                        android:id="@+id/txt_need_analysis_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#D0CBA1"
+                        android:fontFamily="@font/inter_bold" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_need_analysis" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="11.5sp"
+                        android:text="Estimated Token Usage:" />
+                    <TextView
+                        android:id="@+id/txt_est_tokens"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="~0"
+                        android:fontFamily="monospace" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="11.5sp"
+                        android:text="Estimated Duration:" />
+                    <TextView
+                        android:id="@+id/txt_est_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0s"
+                        android:fontFamily="@font/inter_bold"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_quick_sync"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="Quick Sync (10)"
+                android:layout_marginEnd="8dp"
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_start_sync"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="Full Sync (80)"
+                app:cornerRadius="12dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:id="@+id/txt_progress_status"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Syncing: 0/10"
+                    android:textSize="12sp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_stop_sync"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stop Sync"
+                    android:textColor="#E53935"
+                    android:padding="0dp"
+                    app:icon="@drawable/ic_close"
+                    app:iconTint="#E53935" />
+            </LinearLayout>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progress_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:trackThickness="8dp"
+                app:trackCornerRadius="4dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sync &amp; Cost History"
+            android:fontFamily="@font/inter_bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_sync_logs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_sync_log" />
+
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sync &amp; Cost History"
-        android:fontFamily="@font/inter_bold"
-        android:textSize="16sp"
-        android:layout_marginBottom="12dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_sync_logs"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:listitem="@layout/item_sync_log" />
-
-</LinearLayout>
+</ScrollView>

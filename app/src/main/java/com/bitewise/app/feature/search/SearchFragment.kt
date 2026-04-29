@@ -107,27 +107,27 @@ class SearchFragment : BaseFragment<FragmentSearchScreenBinding>(
     }
 
     private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.searchState
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .onEach { state ->
+        viewModel.searchState
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
                 when (state) {
                     is UiState.Loading -> {
                         // TODO: show loading indicator
                     }
+
                     is UiState.Success -> {
                         val results = state.data
                         adapter.submitList(results)
                         binding.txtSearchResults.text = "${results.size} results found"
                     }
+
                     is UiState.Error -> {
                         Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
-        }
-    }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+}
     private fun filterResultsByCountry(countryName: String) {
         // TODO: implement filtering logic
     }
