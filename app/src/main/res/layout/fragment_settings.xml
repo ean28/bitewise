@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Profile"
+            android:textSize="24sp"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="#212121" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Manage your profile and health goals."
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_regular"
+            android:textColor="#BDBDBD"
+            android:layout_marginBottom="24dp" />
+
+        <!-- PHYSICAL SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Physical Information"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="#212121"
+            android:textSize="14sp"
+            android:layout_marginBottom="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Age"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#757575"
+                    android:layout_marginBottom="4dp"/>
+                <EditText
+                    android:id="@+id/edit_age"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input"
+                    android:inputType="number"
+                    android:paddingHorizontal="12dp"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/inter_medium"
+                    android:importantForAutofill="no"
+                    tools:ignore="LabelFor" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weight (kg)"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="#757575"
+                    android:layout_marginBottom="4dp"/>
+                <EditText
+                    android:id="@+id/edit_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input"
+                    android:inputType="numberDecimal"
+                    android:paddingHorizontal="12dp"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/inter_medium"
+                    android:importantForAutofill="no"
+                    tools:ignore="LabelFor" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Height (cm)"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="#757575"
+            android:layout_marginBottom="4dp"/>
+        <EditText
+            android:id="@+id/edit_height"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_input"
+            android:inputType="numberDecimal"
+            android:paddingHorizontal="12dp"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_medium"
+            android:layout_marginBottom="16dp"
+            android:importantForAutofill="no"
+            tools:ignore="LabelFor" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Activity Level"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="#757575"
+            android:layout_marginBottom="4dp"/>
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxBackgroundColor="#F5F5F5"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
+            <AutoCompleteTextView
+                android:id="@+id/spinner_activity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:textSize="14sp"
+                android:fontFamily="@font/inter_medium"
+                android:paddingVertical="12dp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/txt_activity_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="11sp"
+            android:textColor="#BDBDBD"
+            android:fontFamily="@font/inter_regular"
+            android:layout_marginBottom="24dp"
+            tools:text="Moderate exercise description..."/>
+
+        <!-- HEALTH SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Health &amp; Dietary"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="#212121"
+            android:textSize="14sp"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dietary Patterns"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="#757575"
+            android:layout_marginBottom="4dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <AutoCompleteTextView
+                android:id="@+id/multi_diet"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input"
+                android:hint="Search"
+                android:paddingHorizontal="12dp"
+                android:paddingEnd="70dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/inter_medium"
+                android:completionThreshold="1"
+                android:importantForAutofill="no"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_diet"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:fontFamily="@font/inter_bold"
+                app:layout_constraintEnd_toEndOf="@id/multi_diet"
+                app:layout_constraintTop_toTopOf="@id/multi_diet"
+                app:layout_constraintBottom_toBottomOf="@id/multi_diet"
+                android:layout_marginEnd="4dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_diet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            app:chipSpacingHorizontal="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Allergies"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="#757575"
+            android:layout_marginBottom="4dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <AutoCompleteTextView
+                android:id="@+id/multi_allergies"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input"
+                android:hint="Search"
+                android:paddingHorizontal="12dp"
+                android:paddingEnd="70dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/inter_medium"
+                android:completionThreshold="1"
+                android:importantForAutofill="no"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_allergy"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:fontFamily="@font/inter_bold"
+                app:layout_constraintEnd_toEndOf="@id/multi_allergies"
+                app:layout_constraintTop_toTopOf="@id/multi_allergies"
+                app:layout_constraintBottom_toBottomOf="@id/multi_allergies"
+                android:layout_marginEnd="4dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_allergies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            app:chipSpacingHorizontal="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medical Conditions"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="#757575"
+            android:layout_marginBottom="4dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <AutoCompleteTextView
+                android:id="@+id/multi_conditions"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input"
+                android:hint="Search"
+                android:paddingHorizontal="12dp"
+                android:paddingEnd="70dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/inter_medium"
+                android:completionThreshold="1"
+                android:importantForAutofill="no"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_condition"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:fontFamily="@font/inter_bold"
+                app:layout_constraintEnd_toEndOf="@id/multi_conditions"
+                app:layout_constraintTop_toTopOf="@id/multi_conditions"
+                app:layout_constraintBottom_toBottomOf="@id/multi_conditions"
+                android:layout_marginEnd="4dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_conditions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            app:chipSpacingHorizontal="8dp"/>
+
+        <!-- ACTIONS -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_settings"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Save Changes"
+            android:textSize="16sp"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="@android:color/white"
+            app:cornerRadius="28dp"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_inspect_db"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Database Inspector"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:textColor="#A4A4A4"
+            android:textSize="11sp"
+            android:fontFamily="@font/inter_medium"
+            android:layout_marginBottom="16dp"
+            app:icon="@drawable/ic_safety_shield"
+            app:iconSize="12dp"
+            app:iconTint="#A4A4A4" />
+
+        <TextView
+            android:id="@+id/txt_debug_hash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Context Hash: N/A"
+            android:textSize="9sp"
+            android:textColor="#E0E0E0"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/onboarding_nav_graph"
+    app:startDestination="@id/onboarding1Fragment">
+
+    <!-- Step 1 -->
+    <fragment
+        android:id="@+id/onboarding1Fragment"
+        android:name="com.bitewise.app.feature.onboarding.ui.physical.Onboarding1Fragment"
+        android:label="Physical Stats">
+        <action
+            android:id="@+id/action_onboarding1_to_onboarding2"
+            app:destination="@id/onboarding2Fragment" />
+    </fragment>
+
+    <!-- Step 2 -->
+    <fragment
+        android:id="@+id/onboarding2Fragment"
+        android:name="com.bitewise.app.feature.onboarding.ui.lifestyle.Onboarding2Fragment"
+        android:label="Lifestyle">
+        <action
+            android:id="@+id/action_onboarding2_to_onboarding3"
+            app:destination="@id/onboarding3Fragment" />
+    </fragment>
+
+    <!-- Step 3 -->
+    <fragment
+        android:id="@+id/onboarding3Fragment"
+        android:name="com.bitewise.app.feature.onboarding.ui.health.Onboarding3Fragment"
+        android:label="Health">
+    </fragment>
+</navigation>

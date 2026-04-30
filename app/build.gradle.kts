@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.kotlin.serialization)
-//    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.secrets)
 }
 
 android {
@@ -33,6 +33,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            buildConfigField("boolean", "SKIP_ONBOARDING", "false")
+        }
     }
 
     androidResources {
@@ -50,6 +53,16 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        unitTests.all {
+            it.testLogging {
+                events("passed", "skipped", "failed", "standardOut", "standardError")
+                showStandardStreams = true
+                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            }
+        }
+    }
 }
 
 dependencies {
@@ -76,12 +89,17 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
     ksp(libs.androidx.room.compiler)
     
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
 
+    implementation(libs.generativeai)
+
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
